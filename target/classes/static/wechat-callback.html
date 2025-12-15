@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信授权中...</title>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px; /* 增加宽度 */
+            margin: 50px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1890ff, #40a9ff); /* 改为蓝色渐变 */
+            color: white;
+            padding: 50px 30px; /* 增加高度 */
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1890ff; /* 改为蓝色 */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .user-info {
+            display: none;
+            text-align: center;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+            border: 3px solid #1890ff; /* 改为蓝色 */
+        }
+        
+        .nickname {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        /* 移除openid样式 */
+        /* .openid {
+            font-size: 12px;
+            color: #999;
+            word-break: break-all;
+            background: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        } */
+        
+        .error {
+            display: none;
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* 移除按钮相关样式 */
+        /* .success-actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #1AAD19;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #179B16;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        } */
+        
+        .debug-info {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #666;
+            display: none;
+        }
+        
+        .debug-info.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- 移除标题文字 -->
+            <!-- <h1>🚗 停车管理系统</h1> -->
+        </div>
+        
+        <div class="content">
+            <!-- 加载状态 -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>正在验证微信授权...</p>
+            </div>
+            
+            <!-- 用户信息展示 -->
+            <div id="userInfo" class="user-info">
+                <img id="avatar" class="avatar" src="" alt="头像">
+                <div id="nickname" class="nickname"></div>
+                <!-- 移除OpenID显示 -->
+                <!-- <div class="openid">OpenID: <span id="openid"></span></div> -->
+                
+                <!-- 移除按钮区域 -->
+                <!-- <div class="success-actions">
+                    <a href="#" class="btn" onclick="continueToApp()">继续使用应用</a>
+                    <a href="#" class="btn btn-secondary" onclick="showDebugInfo()">调试信息</a>
+                </div> -->
+            </div>
+            
+            <!-- 错误信息 -->
+            <div id="error" class="error">
+                <h3>❌ 授权失败</h3>
+                <p id="errorMessage"></p>
+                <!-- 移除重试按钮 -->
+                <!-- <div style="margin-top: 20px;">
+                    <a href="#" class="btn" onclick="retryAuth()">重试授权</a>
+                </div> -->
+            </div>
+            
+            <!-- 调试信息 -->
+            <div id="debugInfo" class="debug-info">
+                <h4>调试信息</h4>
+                <div id="debugContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量标识JS-SDK是否已准备就绪
+        window.isWxReady = false;
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            handleWeChatCallback();
+        });
+
+        /**
+         * 初始化微信JS-SDK
+         */
+        async function initWechatJSSDK() {
+            console.log('🔧 开始初始化微信JS-SDK...');
+            
+            const currentUrl = window.location.href.split('#')[0]; // 去掉hash部分
+            console.log('🌐 当前URL:', currentUrl);
+            
+            try {
+                // 调用后端接口获取JS-SDK签名
+                const response = await fetch('/parking/wechat-public/getJssdkSignature', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: currentUrl
+                    })
+                });
+                
+                console.log('📊 响应状态:', response.status, response.statusText);
+                
+                // 检查响应状态
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ JS-SDK签名请求失败:', response.status, errorText);
+                    addDebugInfo('JS-SDK签名错误', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        errorText: errorText.substring(0, 200) // 只显示前200个字符
+                    });
+                    // 如果签名失败，仍然尝试使用postMessage作为备选方案
+                    return;
+                }
+                
+                const result = await response.json();
+                console.log('📥 获取JS-SDK签名响应:', result);
+                
+                addDebugInfo('JS-SDK签名', result);
+                
+                if (result.code === '0' && result.data) {
+                    const config = result.data;
+                    
+                    // 配置微信JS-SDK
+                    wx.config({
+                        debug: false, // 生产环境设为false
+                        appId: config.appId,
+                        timestamp: config.timestamp,
+                        nonceStr: config.nonceStr,
+                        signature: config.signature,
+                        jsApiList: [
+                            'miniProgram'  // 小程序相关接口
+                        ]
+                    });
+                    
+                    console.log('✅ 微信JS-SDK配置完成');
+                    
+                    // 等待配置完成
+                    return new Promise((resolve, reject) => {
+                        wx.ready(() => {
+                            console.log('✅ 微信JS-SDK配置成功');
+                            window.isWxReady = true;
+                            addDebugInfo('JS-SDK状态', '配置成功');
+                            resolve();
+                        });
+                        
+                        wx.error((res) => {
+                            console.error('❌ 微信JS-SDK配置失败:', res);
+                            window.isWxReady = false;
+                            addDebugInfo('JS-SDK状态', '配置失败: ' + JSON.stringify(res));
+                            resolve(); // 不阻塞后续流程，使用postMessage作为备选
+                        });
+                        
+                        // 设置超时机制
+                        setTimeout(() => {
+                            if (!window.isWxReady) {
+                                console.warn('⚠️ JS-SDK配置超时，使用备选方案');
+                                addDebugInfo('JS-SDK状态', '配置超时');
+                                resolve();
+                            }
+                        }, 3000);
+                    });
+                    
+                } else {
+                    console.error('❌ 获取JS-SDK签名失败:', result.msg);
+                    addDebugInfo('JS-SDK错误', result.msg);
+                    // 如果签名失败，仍然尝试使用postMessage作为备选方案
+                }
+            } catch (error) {
+                console.error('❌ 初始化JS-SDK异常:', error);
+                addDebugInfo('JS-SDK异常', error.message);
+                // 如果网络异常，仍然尝试使用postMessage作为备选方案
+            }
+        }
+
+        /**
+         * 处理微信授权回调
+         */
+        async function handleWeChatCallback() {
+            try {
+                // 🆕 首先初始化微信JS-SDK
+                // await initWechatJSSDK();
+                
+                // 添加页面基本信息到调试
+                addDebugInfo('页面信息', {
+                    url: window.location.href,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent.substring(0, 100) + '...'
+                });
+                
+                // 1. 获取URL参数
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const state = urlParams.get('state');
+                
+                addDebugInfo('URL参数', { code, state });
+                
+                // 2. 检查是否有code参数
+                if (!code) {
+                    const noCodeErrorMsg = '未获取到授权码，请重新授权';
+                    showError(noCodeErrorMsg);
+                    
+                    // 🆕 如果在小程序环境中，发送授权失败消息
+                    if (isInMiniProgramWebView()) {
+                        sendAuthFailureToMiniProgram(noCodeErrorMsg);
+                    }
+                    return;
+                }
+                
+                // 3. 调用后端API进行授权
+                const response = await fetch('/parking/wechat/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        state: state
+                    })
+                });
+                
+                const result = await response.json();
+                addDebugInfo('后端响应', result);
+                
+                // 4. 处理响应结果 - 基于控制器的Result格式
+                if (result.code === '0') {
+                    showUserInfo(result.data);
+                    
+                    // 保存用户信息到localStorage（可选）
+                    if (result.data.accessToken) {
+                        localStorage.setItem('wechat_access_token', result.data.accessToken);
+                    }
+                    if (result.data.userInfo) {
+                        localStorage.setItem('wechat_user_info', JSON.stringify(result.data.userInfo));
+                    }
+                    if (result.data.localUser) {
+                        localStorage.setItem('local_user_info', JSON.stringify(result.data.localUser));
+                    }
+                } else {
+                    const errorMsg = result.msg || '授权失败，请重试';
+                    showError(errorMsg);
+                    
+                    // 🆕 如果在小程序环境中，发送授权失败消息
+                    if (isInMiniProgramWebView()) {
+                        sendAuthFailureToMiniProgram(errorMsg);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('授权处理异常:', error);
+                addDebugInfo('异常信息', {
+                    message: error.message,
+                    stack: error.stack,
+                    timestamp: new Date().toISOString()
+                });
+                const networkErrorMsg = '网络异常，请检查网络连接后重试';
+                showError(networkErrorMsg);
+                
+                // 🆕 如果在小程序环境中，发送授权失败消息
+                if (isInMiniProgramWebView()) {
+                    sendAuthFailureToMiniProgram(networkErrorMsg);
+                }
+            }
+        }
+
+        /**
+         * 显示用户信息
+         */
+        function showUserInfo(data) {
+            const userInfo = data.userInfo || {};
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            
+            // 设置用户信息
+            const avatar = document.getElementById('avatar');
+            avatar.src = userInfo.headimgurl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiMxQUFEMTkiLz4KPGC4Y3g9IjQwIiBjeT0iMzQiIHI9IjE0IiBmaWxsPSJ3aGl0ZSIvPgo8ZWxsaXBzZSBjeD0iNDAiIGN5PSI2NSIgcng9IjIwIiByeT0iMTIiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=';
+            
+            // 处理头像加载错误
+            avatar.onerror = function() {
+                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiMxQUFEMTkiLz4KPGC4Y3g9IjQwIiBjeT0iMzQiIHI9IjE0IiBmaWxsPSJ3aGl0ZSIvPgo8ZWxsaXBzZSBjeD0iNDAiIGN5PSI2NSIgcng9IjIwIiByeT0iMTIiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=';
+                this.onerror = null; // 防止无限循环
+            };
+            
+            document.getElementById('nickname').textContent = userInfo.nickname || '微信用户';
+            // 移除OpenID显示
+            // document.getElementById('openid').textContent = userInfo.openid || 'N/A';
+            
+            // 移除详细用户信息显示
+            // addUserDetails(data);
+        }
+        
+        /**
+         * 添加详细用户信息展示
+         */
+        function addUserDetails(data) {
+            const userInfoDiv = document.getElementById('userInfo');
+            
+            // 创建详细信息容器
+            let detailsDiv = document.getElementById('userDetails');
+            if (!detailsDiv) {
+                detailsDiv = document.createElement('div');
+                detailsDiv.id = 'userDetails';
+                detailsDiv.style.cssText = `
+                    margin-top: 20px;
+                    padding: 15px;
+                    background: #f8f9fa;
+                    border-radius: 5px;
+                    font-size: 14px;
+                    text-align: left;
+                `;
+                
+                // 插入到成功操作按钮之前
+                const successActions = userInfoDiv.querySelector('.success-actions');
+                userInfoDiv.insertBefore(detailsDiv, successActions);
+            }
+            
+            // 构建详细信息HTML
+            let detailsHtml = '<h4 style="margin-top:0; color:#1AAD19;">✅ 授权信息</h4>';
+            
+            // 授权范围
+            if (data.authScope) {
+                detailsHtml += `<p><strong>授权范围：</strong>${data.authScope === 'snsapi_userinfo' ? '获取用户信息' : '仅获取OpenID'}</p>`;
+            }
+            
+            // 本地用户状态
+            if (data.hasOwnProperty('isRegistered')) {
+                detailsHtml += `<p><strong>注册状态：</strong>${data.isRegistered ? '✅ 已注册' : '❌ 未注册'}</p>`;
+            }
+            
+            // 本地用户信息
+            if (data.localUser) {
+                detailsHtml += '<h4 style="color:#1AAD19;">👤 本地用户信息</h4>';
+                detailsHtml += `<p><strong>用户ID：</strong>${data.localUser.userid || 'N/A'}</p>`;
+                detailsHtml += `<p><strong>手机号：</strong>${data.localUser.userphone || 'N/A'}</p>`;
+                detailsHtml += `<p><strong>姓名：</strong>${data.localUser.username || 'N/A'}</p>`;
+                if (data.localUser.userkind) {
+                    detailsHtml += `<p><strong>用户类型：</strong>${data.localUser.userkind}</p>`;
+                }
+            }
+            
+            // 状态参数
+            if (data.state) {
+                detailsHtml += `<p><strong>状态参数：</strong>${data.state}</p>`;
+            }
+            
+            detailsDiv.innerHTML = detailsHtml;
+        }
+
+        /**
+         * 显示错误信息
+         */
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        /**
+         * 显示成功信息
+         */
+        function showSuccess(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            
+            // 创建或更新成功提示元素
+            let successElement = document.getElementById('successMessage');
+            if (!successElement) {
+                successElement = document.createElement('div');
+                successElement.id = 'successMessage';
+                successElement.style.cssText = `
+                    color: #1AAD19;
+                    text-align: center;
+                    font-size: 16px;
+                    font-weight: 500;
+                    margin-bottom: 20px;
+                    padding: 15px;
+                    background: #f0fff0;
+                    border-radius: 5px;
+                    border: 1px solid #1AAD19;
+                `;
+                document.querySelector('.content').insertBefore(successElement, document.getElementById('userInfo'));
+            }
+            successElement.textContent = message;
+        }
+
+        /**
+         * 继续使用应用
+         */
+        function continueToApp() {
+            // 🆕 检查是否在小程序 web-view 环境中
+            if (isInMiniProgramWebView()) {
+                // 在小程序环境中，向小程序发送授权成功消息
+                sendMessageToMiniProgram();
+                return;
+            }
+            
+            // 检查是否有本地用户信息
+            const localUserInfo = localStorage.getItem('local_user_info');
+            const wechatUserInfo = localStorage.getItem('wechat_user_info');
+            
+            if (localUserInfo) {
+                // 已注册用户，跳转到主应用
+                window.location.href = '/parking/index.html';
+            } else if (wechatUserInfo) {
+                // 仅有微信信息，可能需要注册
+                window.location.href = '/parking/register.html';
+            } else {
+                // 跳转到测试页面
+                window.location.href = '/wechat-auth-test.html';
+            }
+            
+            // 在微信内置浏览器中可以选择关闭窗口
+            // if (navigator.userAgent.indexOf('MicroMessenger') !== -1) {
+            //     window.close();
+            // }
+        }
+
+        /**
+         * 🆕 检查是否在小程序 web-view 环境中
+         */
+        function isInMiniProgramWebView() {
+            // 检查是否存在小程序环境的标识
+            return window.__wxjs_environment === 'miniprogram' || 
+                   wx?.miniProgram || 
+                   navigator.userAgent.indexOf('miniProgram') !== -1;
+        }
+
+        /**
+         * 🆕 向小程序发送授权成功消息
+         */
+        function sendMessageToMiniProgram() {
+            try {
+                const wechatUserInfo = JSON.parse(localStorage.getItem('wechat_user_info') || '{}');
+                
+                addDebugInfo('向小程序发送消息', {
+                    hasWechatUserInfo: !!wechatUserInfo.openid,
+                    userInfo: {
+                        openid: wechatUserInfo.openid || 'N/A',
+                        nickname: wechatUserInfo.nickname || 'N/A'
+                    }
+                });
+
+                // 🆕 保存授权结果到本地存储，供小程序读取
+                const authResult = {
+                    success: true,
+                    userInfo: wechatUserInfo,
+                    timestamp: Date.now()
+                };
+                
+                try {
+                    localStorage.setItem('wechat_auth_result', JSON.stringify(authResult));
+                    addDebugInfo('授权结果保存', '已保存到localStorage');
+                } catch (e) {
+                    addDebugInfo('授权结果保存失败', e.message);
+                }
+
+                // 检查是否有微信JSSDK并且已正确配置
+                if (wx && wx.miniProgram) {
+                    // 使用微信JSSDK发送消息
+                    wx.miniProgram.postMessage({
+                        data: {
+                            type: 'auth_success',
+                            userInfo: wechatUserInfo,
+                            timestamp: Date.now()
+                        }
+                    });
+                    
+                    // 🆕 立即跳转到手机号授权页面，携带用户信息作为URL参数
+                    setTimeout(() => {
+                        // 构造URL参数，包含完整的用户信息
+                        const urlParams = new URLSearchParams({
+                            fromWechatAuth: 'true',
+                            authSuccess: 'true',
+                            openid: wechatUserInfo.openid || '',
+                            nickname: encodeURIComponent(wechatUserInfo.nickname || ''),
+                            sex: wechatUserInfo.sex || 0,
+                            city: encodeURIComponent(wechatUserInfo.city || ''),
+                            province: encodeURIComponent(wechatUserInfo.province || ''),
+                            country: encodeURIComponent(wechatUserInfo.country || ''),
+                            headimgurl: encodeURIComponent(wechatUserInfo.headimgurl || ''),
+                            unionid: wechatUserInfo.unionid || '',
+                            timestamp: Date.now()
+                        });
+                        
+                        wx.miniProgram.navigateTo({
+                            url: `/pages/auth/phone-auth?fromWechatAuth=true&${urlParams.toString()}`
+                        });
+                    }, 500); // 缩短延迟时间
+                    
+                    addDebugInfo('消息发送状态', '已通过微信JSSDK发送（签名验证通过）');
+                } else {
+                    // 降级方案：使用 postMessage
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({
+                            type: 'auth_success',
+                            userInfo: wechatUserInfo,
+                            timestamp: Date.now()
+                        }, '*');
+                    }
+                    
+                    // 降级方案也要跳转
+                    setTimeout(() => {
+                        if (wx && wx.miniProgram) {
+                            wx.miniProgram.navigateTo({
+                                url: '/pages/auth/phone-auth?fromWechatAuth=true'
+                            });
+                        }
+                    }, 500);
+                    
+                    addDebugInfo('消息发送状态', '已通过postMessage发送（JS-SDK未就绪）');
+                }
+                
+                // 显示成功提示
+                showSuccess('微信授权成功！正在跳转到手机号授权页面...');
+                
+            } catch (error) {
+                console.error('向小程序发送消息失败:', error);
+                addDebugInfo('发送消息错误', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                // 🆕 即使发送失败，也要保存错误结果并跳转
+                const errorResult = {
+                    success: false,
+                    error: error.message,
+                    timestamp: Date.now()
+                };
+                
+                try {
+                    localStorage.setItem('wechat_auth_result', JSON.stringify(errorResult));
+                } catch (e) {
+                    console.error('保存错误结果失败:', e);
+                }
+                
+                // 发送失败，尝试跳转到手机号授权页面
+                if (wx && wx.miniProgram) {
+                    wx.miniProgram.navigateTo({
+                        url: '/pages/auth/phone-auth?fromWechatAuth=true&error=true'
+                    });
+                }
+            }
+        }
+
+        /**
+         * 🆕 向小程序发送授权失败消息
+         */
+        function sendAuthFailureToMiniProgram(errorMessage) {
+            try {
+                addDebugInfo('向小程序发送失败消息', { errorMessage });
+
+                // 🆕 保存授权失败结果到本地存储
+                const errorResult = {
+                    success: false,
+                    error: errorMessage,
+                    timestamp: Date.now()
+                };
+                
+                try {
+                    localStorage.setItem('wechat_auth_result', JSON.stringify(errorResult));
+                    addDebugInfo('授权失败结果保存', '已保存到localStorage');
+                } catch (e) {
+                    addDebugInfo('授权失败结果保存失败', e.message);
+                }
+
+                // 检查是否有微信JSSDK并且已正确配置
+                if (window.isWxReady && wx && wx.miniProgram) {
+                    // 使用微信JSSDK发送消息
+                    wx.miniProgram.postMessage({
+                        data: {
+                            type: 'auth_error',
+                            error: errorMessage,
+                            timestamp: Date.now()
+                        }
+                    });
+                    
+                    // 🆕 即使失败也要跳转回去，让用户可以重试或跳过
+                    setTimeout(() => {
+                        wx.miniProgram.navigateTo({
+                            url: '/pages/auth/phone-auth?fromWechatAuth=true&error=true'
+                        });
+                    }, 1500); // 稍微延长一点时间让用户看到错误信息
+                    
+                    addDebugInfo('失败消息发送状态', '已通过微信JSSDK发送（签名验证通过）');
+                } else {
+                    // 降级方案：使用 postMessage
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({
+                            type: 'auth_error',
+                            error: errorMessage,
+                            timestamp: Date.now()
+                        }, '*');
+                    }
+                    
+                    // 降级方案也要跳转
+                    setTimeout(() => {
+                        if (wx && wx.miniProgram) {
+                            wx.miniProgram.navigateTo({
+                                url: '/pages/auth/phone-auth?fromWechatAuth=true&error=true'
+                            });
+                        }
+                    }, 1500);
+                    
+                    addDebugInfo('失败消息发送状态', '已通过postMessage发送（JS-SDK未就绪）');
+                }
+                
+            } catch (error) {
+                console.error('向小程序发送失败消息失败:', error);
+                addDebugInfo('发送失败消息错误', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                // 发送失败，尝试跳转到手机号授权页面
+                if (wx && wx.miniProgram) {
+                    wx.miniProgram.navigateTo({
+                        url: '/pages/auth/phone-auth?fromWechatAuth=true&error=true'
+                    });
+                }
+            }
+        }
+
+        /**
+         * 🆕 页面加载完成后自动检测并处理
+         */
+        window.addEventListener('load', function() {
+            // 延迟执行，确保页面完全加载
+            setTimeout(() => {
+                // 如果在小程序环境中，检查是否需要自动跳转
+                if (isInMiniProgramWebView()) {
+                    // 检查是否有用户信息
+                    const wechatUserInfo = localStorage.getItem('wechat_user_info');
+                    if (wechatUserInfo) {
+                        // 有用户信息，自动发送成功消息
+                        addDebugInfo('自动检测', '检测到用户信息，自动发送成功消息');
+                        setTimeout(() => {
+                            sendMessageToMiniProgram();
+                        }, 3000); // 3秒后自动跳转
+                    }
+                }
+            }, 1000);
+        });
+
+        /**
+         * 重试授权
+         */
+        async function retryAuth() {
+            try {
+                // 调用控制器获取新的授权URL
+                const response = await fetch('/parking/wechat/auth-url?scope=snsapi_userinfo&state=retry_' + Date.now());
+                const result = await response.json();
+                
+                if (result.code === '0') {
+                    // 跳转到微信授权页面
+                    window.location.href = result.data;
+                } else {
+                    alert('获取授权URL失败: ' + result.msg);
+                }
+            } catch (error) {
+                console.error('重试授权失败:', error);
+                alert('网络异常，请检查网络连接后重试');
+            }
+        }
+
+        /**
+         * 显示/隐藏调试信息
+         */
+        function showDebugInfo() {
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.classList.toggle('show');
+        }
+
+        /**
+         * 添加调试信息
+         */
+        function addDebugInfo(title, data) {
+            const debugContent = document.getElementById('debugContent');
+            const debugItem = document.createElement('div');
+            debugItem.innerHTML = `
+                <strong>${title}:</strong><br>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+                <hr>
+            `;
+            debugContent.appendChild(debugItem);
+        }
+
+        // 微信JS-SDK相关（可选）
+        // 如果您需要调用微信JS-SDK功能，可以在这里添加
+        /*
+        function initWeChatJSSDK() {
+            // 配置微信JS-SDK
+            wx.config({
+                // 配置信息
+            });
+        }
+        */
+    </script>
+</body>
+</html> 

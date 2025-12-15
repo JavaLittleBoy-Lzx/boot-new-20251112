@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访客预约查询接口 - 前端调用示例</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .result-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .info-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .reservation-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .reservation-card h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .field {
+            display: flex;
+            margin: 8px 0;
+        }
+        .field-label {
+            font-weight: bold;
+            width: 180px;
+            color: #666;
+        }
+        .field-value {
+            color: #333;
+            flex: 1;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-in {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-out {
+            background-color: #9E9E9E;
+            color: white;
+        }
+        .status-waiting {
+            background-color: #FF9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 访客预约查询接口 - 前端调用示例</h1>
+        
+        <div class="info-box">
+            <strong>📌 接口说明：</strong><br>
+            根据车牌号查询当前有效的访客预约信息，只返回当前时间在网关通行时间范围内的预约记录。
+        </div>
+
+        <div class="input-group">
+            <label for="baseUrl">🌐 API 基础地址：</label>
+            <input type="text" id="baseUrl" value="http://www.xuerparking.cn:8080" placeholder="例如: http://www.xuerparking.cn:8080">
+        </div>
+
+        <div class="input-group">
+            <label for="carNumber">🚙 车牌号：</label>
+            <input type="text" id="carNumber" value="京A12345" placeholder="请输入车牌号">
+        </div>
+
+        <div>
+            <button onclick="queryReservation()">🔍 查询预约信息</button>
+            <button onclick="clearResult()">🗑️ 清空结果</button>
+        </div>
+
+        <div id="resultArea" class="result-area" style="display: none;">
+            <div class="result-title">📊 查询结果：</div>
+            <div id="resultContent"></div>
+            <div class="result-title" style="margin-top: 20px;">📝 原始响应数据：</div>
+            <pre id="rawJson"></pre>
+        </div>
+    </div>
+
+    <script>
+        // 查询预约信息
+        async function queryReservation() {
+            const baseUrl = document.getElementById('baseUrl').value.trim();
+            const carNumber = document.getElementById('carNumber').value.trim();
+            
+            if (!baseUrl) {
+                alert('请输入API基础地址！');
+                return;
+            }
+            
+            if (!carNumber) {
+                alert('请输入车牌号！');
+                return;
+            }
+
+            const apiUrl = `${baseUrl}/parking/nefuData/getVisitorReservationByCarNumber?carNumber=${encodeURIComponent(carNumber)}`;
+            
+            console.log('🔍 查询接口:', apiUrl);
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                console.log('📥 响应数据:', data);
+                
+                displayResult(data);
+                
+            } catch (error) {
+                console.error('❌ 请求失败:', error);
+                alert('请求失败: ' + error.message);
+            }
+        }
+
+        // 显示结果
+        function displayResult(data) {
+            const resultArea = document.getElementById('resultArea');
+            const resultContent = document.getElementById('resultContent');
+            const rawJson = document.getElementById('rawJson');
+            
+            // 显示原始JSON
+            rawJson.textContent = JSON.stringify(data, null, 2);
+            
+            // 解析并显示结果
+            if (data.code === 200) {
+                if (data.data && data.data.reservations && data.data.reservations.length > 0) {
+                    // 有有效预约
+                    let html = `
+                        <div style="background: #e8f5e9; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                            <strong>✅ 查询成功</strong><br>
+                            共找到 ${data.data.totalCount} 条预约记录，其中 ${data.data.validCount} 条当前有效
+                        </div>
+                    `;
+                    
+                    data.data.reservations.forEach((reservation, index) => {
+                        html += createReservationCard(reservation, index + 1);
+                    });
+                    
+                    resultContent.innerHTML = html;
+                } else if (data.data && data.data.message) {
+                    // 有预约但不在有效期内
+                    resultContent.innerHTML = `
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 4px;">
+                            <strong>⚠️ ${data.data.message}</strong><br>
+                            共找到 ${data.data.totalCount} 条预约记录，但当前时间不在有效期内
+                        </div>
+                    `;
+                } else {
+                    // 未找到预约
+                    resultContent.innerHTML = `
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 4px;">
+                            <strong>ℹ️ 未找到预约记录</strong><br>
+                            该车牌号暂无预约信息
+                        </div>
+                    `;
+                }
+            } else {
+                // 请求失败
+                resultContent.innerHTML = `
+                    <div style="background: #f8d7da; padding: 15px; border-radius: 4px;">
+                        <strong>❌ 查询失败</strong><br>
+                        ${data.message}
+                    </div>
+                `;
+            }
+            
+            resultArea.style.display = 'block';
+        }
+
+        // 创建预约卡片
+        function createReservationCard(reservation, index) {
+            const statusClass = 
+                reservation.carVisitStatus === '已进场' ? 'status-in' :
+                reservation.carVisitStatus === '已离场' ? 'status-out' :
+                'status-waiting';
+            
+            let html = `
+                <div class="reservation-card">
+                    <h3>预约记录 #${index}</h3>
+            `;
+            
+            // 添加字段
+            if (reservation.reservationId) {
+                html += createField('预约ID', reservation.reservationId);
+            }
+            if (reservation.visitorName) {
+                html += createField('访客姓名', reservation.visitorName);
+            }
+            if (reservation.visitorPhone) {
+                html += createField('访客电话', reservation.visitorPhone);
+            }
+            if (reservation.passName) {
+                html += createField('被访人', reservation.passName);
+            }
+            if (reservation.passDep) {
+                html += createField('被访部门', reservation.passDep);
+            }
+            if (reservation.vipTypeName) {
+                html += createField('VIP类型', reservation.vipTypeName);
+            }
+            if (reservation.gatewayTransitBeginTime) {
+                html += createField('通行开始时间', reservation.gatewayTransitBeginTime);
+            }
+            if (reservation.gatewayTransitEndTime) {
+                html += createField('通行结束时间', reservation.gatewayTransitEndTime);
+            }
+            if (reservation.carVisitStatus) {
+                html += createField('车辆状态', `<span class="status-badge ${statusClass}">${reservation.carVisitStatus}</span>`);
+            }
+            if (reservation.carVisitTimes) {
+                try {
+                    const times = JSON.parse(reservation.carVisitTimes);
+                    let timesHtml = '<ul style="margin: 0; padding-left: 20px;">';
+                    times.forEach(time => {
+                        timesHtml += `<li>进场: ${time.enterTime || '未知'}`;
+                        if (time.leaveTime) {
+                            timesHtml += ` → 离场: ${time.leaveTime}`;
+                        }
+                        timesHtml += '</li>';
+                    });
+                    timesHtml += '</ul>';
+                    html += createField('进出场记录', timesHtml);
+                } catch (e) {
+                    html += createField('进出场记录', reservation.carVisitTimes);
+                }
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // 创建字段行
+        function createField(label, value) {
+            return `
+                <div class="field">
+                    <div class="field-label">${label}：</div>
+                    <div class="field-value">${value}</div>
+                </div>
+            `;
+        }
+
+        // 清空结果
+        function clearResult() {
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('resultContent').innerHTML = '';
+            document.getElementById('rawJson').textContent = '';
+        }
+    </script>
+</body>
+</html>

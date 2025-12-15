@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信网页授权测试</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1AAD19, #2DC653);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #1AAD19;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #1AAD19;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+            font-size: 14px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #179B16;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .config-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .config-info h4 {
+            margin-top: 0;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 微信网页授权测试</h1>
+        </div>
+        
+        <div class="content">
+            <!-- 配置信息 -->
+            <div class="config-info">
+                <h4>📋 当前配置</h4>
+                <p><strong>回调地址：</strong><span id="currentUrl"></span></p>
+                <p><strong>接口前缀：</strong>/parking/wechat/</p>
+                <p><strong>状态：</strong><span id="configStatus">检查中...</span></p>
+            </div>
+            
+            <!-- 测试1：获取授权URL -->
+            <div class="test-section">
+                <h3>📱 测试1：获取微信授权URL</h3>
+                <div class="input-group">
+                    <label>授权范围 (scope):</label>
+                    <select id="authScope">
+                        <option value="snsapi_userinfo">snsapi_userinfo (获取用户信息)</option>
+                        <option value="snsapi_base">snsapi_base (仅获取openid)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>状态参数 (state):</label>
+                    <input type="text" id="authState" value="test_auth" placeholder="可选的状态参数">
+                </div>
+                <button class="btn" onclick="getAuthUrl()">获取授权URL</button>
+                <button class="btn btn-secondary" onclick="clearResult('authResult')">清空结果</button>
+                <div id="authResult" class="result"></div>
+            </div>
+            
+            <!-- 测试2：模拟授权回调 -->
+            <div class="test-section">
+                <h3>🔄 测试2：模拟授权回调</h3>
+                <div class="input-group">
+                    <label>授权码 (code):</label>
+                    <input type="text" id="authCode" placeholder="从微信授权返回的code">
+                </div>
+                <div class="input-group">
+                    <label>状态参数 (state):</label>
+                    <input type="text" id="callbackState" value="test_auth" placeholder="状态参数">
+                </div>
+                <button class="btn" onclick="testAuthCallback()">测试授权回调</button>
+                <button class="btn btn-secondary" onclick="clearResult('callbackResult')">清空结果</button>
+                <div id="callbackResult" class="result"></div>
+            </div>
+            
+            <!-- 测试3：完整流程 -->
+            <div class="test-section">
+                <h3>🎯 测试3：完整授权流程</h3>
+                <p>点击按钮将跳转到微信授权页面，授权后自动返回到回调页面</p>
+                <div class="input-group">
+                    <label>测试模式:</label>
+                    <select id="testMode">
+                        <option value="snsapi_userinfo">完整模式 (获取用户信息)</option>
+                        <option value="snsapi_base">简化模式 (仅获取openid)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="startFullAuth()">开始完整授权测试</button>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                    ⚠️ 注意：此功能需要在微信客户端中访问才能正常工作
+                </p>
+            </div>
+            
+            <!-- 系统状态 -->
+            <div class="test-section">
+                <h3>🔧 系统状态检查</h3>
+                <button class="btn btn-secondary" onclick="checkSystemStatus()">检查系统状态</button>
+                <div id="statusResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentUrl();
+            checkConfig();
+        });
+
+        // 更新当前URL显示
+        function updateCurrentUrl() {
+            document.getElementById('currentUrl').textContent = window.location.origin;
+        }
+
+        // 检查配置
+        function checkConfig() {
+            const statusElement = document.getElementById('configStatus');
+            
+            // 简单检查是否能访问到接口
+            fetch('/parking/wechat/auth-url?scope=snsapi_base&state=config_test')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === '0') {
+                        statusElement.textContent = '✅ 配置正常';
+                        statusElement.style.color = '#4caf50';
+                    } else {
+                        statusElement.textContent = '❌ 配置异常: ' + data.msg;
+                        statusElement.style.color = '#f44336';
+                    }
+                })
+                .catch(error => {
+                    statusElement.textContent = '❌ 接口不可访问';
+                    statusElement.style.color = '#f44336';
+                });
+        }
+
+        // 获取授权URL
+        async function getAuthUrl() {
+            const scope = document.getElementById('authScope').value;
+            const state = document.getElementById('authState').value;
+            const resultElement = document.getElementById('authResult');
+            
+            try {
+                resultElement.textContent = '请求中...';
+                
+                const response = await fetch(`/parking/wechat/auth-url?scope=${scope}&state=${state}`);
+                const data = await response.json();
+                
+                resultElement.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.code === '0') {
+                    // 添加快捷操作按钮
+                    const buttonHtml = `
+                        <div style="margin-top: 15px;">
+                            <button class="btn" onclick="window.open('${data.data}', '_blank')">在新窗口打开授权URL</button>
+                            <button class="btn btn-secondary" onclick="copyToClipboard('${data.data}')">复制URL</button>
+                        </div>
+                    `;
+                    resultElement.innerHTML = resultElement.textContent + buttonHtml;
+                }
+            } catch (error) {
+                resultElement.textContent = '请求失败: ' + error.message;
+            }
+        }
+
+        // 测试授权回调
+        async function testAuthCallback() {
+            const code = document.getElementById('authCode').value;
+            const state = document.getElementById('callbackState').value;
+            const resultElement = document.getElementById('callbackResult');
+            
+            if (!code.trim()) {
+                alert('请输入授权码');
+                return;
+            }
+            
+            try {
+                resultElement.textContent = '处理中...';
+                
+                const response = await fetch('/parking/wechat/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        state: state
+                    })
+                });
+                
+                const data = await response.json();
+                resultElement.textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                resultElement.textContent = '请求失败: ' + error.message;
+            }
+        }
+
+        // 开始完整授权流程
+        async function startFullAuth() {
+            const mode = document.getElementById('testMode').value;
+            const state = 'full_test_' + Date.now();
+            
+            try {
+                const response = await fetch(`/parking/wechat/auth-url?scope=${mode}&state=${state}`);
+                const data = await response.json();
+                
+                if (data.code === '0') {
+                    // 直接跳转到微信授权页面
+                    window.location.href = data.data;
+                } else {
+                    alert('获取授权URL失败: ' + data.msg);
+                }
+            } catch (error) {
+                alert('请求失败: ' + error.message);
+            }
+        }
+
+        // 检查系统状态
+        async function checkSystemStatus() {
+            const resultElement = document.getElementById('statusResult');
+            
+            const checks = [
+                { name: '授权URL接口', url: '/parking/wechat/auth-url?scope=snsapi_base&state=status_check' },
+                { name: '回调页面', url: '/wechat-callback.html' }
+            ];
+            
+            let results = '系统状态检查结果:\n\n';
+            
+            for (const check of checks) {
+                try {
+                    const response = await fetch(check.url);
+                    if (response.ok) {
+                        results += `✅ ${check.name}: 正常\n`;
+                    } else {
+                        results += `❌ ${check.name}: HTTP ${response.status}\n`;
+                    }
+                } catch (error) {
+                    results += `❌ ${check.name}: ${error.message}\n`;
+                }
+            }
+            
+            results += `\n当前时间: ${new Date().toLocaleString()}`;
+            resultElement.textContent = results;
+        }
+
+        // 清空结果
+        function clearResult(elementId) {
+            document.getElementById(elementId).textContent = '';
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('已复制到剪贴板');
+            }, function(err) {
+                alert('复制失败');
+            });
+        }
+
+        // 检查是否有从授权返回的参数
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+            
+            if (code && state && state.startsWith('full_test_')) {
+                // 自动填充回调测试表单
+                document.getElementById('authCode').value = code;
+                document.getElementById('callbackState').value = state;
+                
+                // 自动执行回调测试
+                setTimeout(() => {
+                    testAuthCallback();
+                }, 1000);
+            }
+        };
+    </script>
+</body>
+</html> 

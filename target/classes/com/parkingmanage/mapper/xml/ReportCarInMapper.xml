@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parkingmanage.mapper.ReportCarInMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.parkingmanage.entity.ReportCarIn">
+        <id column="id" property="id"/>
+        <result column="enter_channel_code" property="enterChannelCode"/>
+        <result column="enter_type" property="enterType"/>
+        <result column="yard_name" property="yardName"/>
+        <result column="enter_vip_type" property="enterVipType"/>
+        <result column="car_license_number" property="carLicenseNumber"/>
+        <result column="enter_no_vip_code" property="enterNoVipCode"/>
+        <result column="enter_car_license_number" property="enterCarLicenseNumber"/>
+        <result column="enter_no_vip_code_name" property="enterNoVipCodeName"/>
+        <result column="parking_code" property="parkingCode"/>
+        <result column="enter_channel_name" property="enterChannelName"/>
+        <result column="correct_type" property="correctType"/>
+        <result column="enter_time" property="enterTime"/>
+        <result column="enter_car_license_color" property="enterCarLicenseColor"/>
+        <result column="enter_channel_id" property="enterChannelId"/>
+        <result column="in_operator_name" property="inOperatorName"/>
+        <result column="in_operator_time" property="inOperatorTime"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , isParkInOut, enter_channel_code, enter_type, enter_vip_type, car_license_number, enter_car_type,
+        enter_no_vip_code, enter_car_license_number, enter_no_vip_code_name, parking_code, enter_channel_name,
+        correct_type, enter_time, enter_car_license_color, enter_channel_id, in_operator_name, in_operator_time,
+        deleted, create_time, update_time
+    </sql>
+    <update id="updateByCarNumber">
+        update report_car_in
+        set pre_vip_type = #{preVipType}
+        where car_license_number = #{carLicenseNumber}
+        and deleted = 0
+    </update>
+    <select id="findByLicenseNumber" resultType="com.parkingmanage.entity.ReportCarIn">
+        select *
+        from report_car_in
+        where parking_code = #{parkingCode}
+    </select>
+    <select id="countByDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM report_car_in
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+        AND yard_name = #{yardName};
+    </select>
+    <select id="countByDateVIP" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM report_car_in
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+        AND yard_name = #{yardName}
+        AND enter_vip_type = '本地VIP'
+        AND in_operator_name = 'System';
+    </select>
+    <select id="queryListReportOutExport" resultType="com.parkingmanage.entity.ReportCarInReservation">
+        SELECT DISTINCT v.*, r.notifier_name as notifierName, r.remark as remark
+        FROM report_car_in v
+        LEFT JOIN
+        (SELECT * FROM vehicle_reservation WHERE deleted = 0 and create_time BETWEEN #{startDate} AND #{endDate}) r
+        ON r.plate_number = v.enter_car_license_number
+        WHERE v.enter_time BETWEEN #{startDate} AND #{endDate}
+        AND v.yard_name = #{yardName}
+        AND v.enter_vip_type = '本地VIP'
+        AND v.in_operator_name != 'System' AND v.in_operator_name != 'system';
+    </select>
+    <select id="queryListReportCarOutExportLinShi"
+            resultType="com.parkingmanage.entity.ReportCarInReservation">
+        SELECT DISTINCT v.*, r.notifier_name as notifierName, r.remark as remark
+        FROM report_car_in v
+        LEFT JOIN
+        (SELECT * FROM vehicle_reservation WHERE deleted = 0 and create_time BETWEEN #{startDate} AND #{endDate}) r
+        ON r.plate_number = v.enter_car_license_number
+        WHERE v.enter_time BETWEEN #{startDate} AND #{endDate}
+        AND v.yard_name = #{yardName}
+        AND v.enter_vip_type = '临时车'
+        AND v.in_operator_name != 'System' AND v.in_operator_name != 'system';
+    </select>
+    <select id="selectCarRecords" resultType="com.parkingmanage.entity.ReportCarIn">
+        SELECT *
+        from report_car_in
+        WHERE enter_time = (SELECT Max(enter_time)
+        from report_car_in
+        WHERE enter_time &lt; #{enterTime}
+        AND enter_car_license_number = #{carCode});
+    </select>
+    <select id="queryListReportOutExportWan" resultType="com.parkingmanage.entity.ReportCarInReservation">
+        SELECT DISTINCT v.*, r.notifier_name as notifierName, r.remark as remark
+        FROM report_car_in v
+        LEFT JOIN
+        (SELECT * FROM vehicle_reservation WHERE deleted = 0 and create_time BETWEEN #{startDate} AND #{endDate}) r
+        ON r.plate_number = v.enter_car_license_number
+        WHERE v.enter_time BETWEEN #{startDate} AND #{endDate}
+        AND v.yard_name = #{yardName}
+        AND v.enter_vip_type = '本地VIP'
+        AND v.in_operator_name != 'System' AND v.in_operator_name != 'system' AND v.enter_channel_name = #{channelName};
+    </select>
+    <select id="queryListReportCarOutExportLinShiWan"
+            resultType="com.parkingmanage.entity.ReportCarInReservation">
+        SELECT DISTINCT v.*, r.notifier_name as notifierName, r.remark as remark
+        FROM report_car_in v
+        LEFT JOIN
+        (SELECT * FROM vehicle_reservation WHERE deleted = 0) r
+        ON r.plate_number = v.enter_car_license_number
+        WHERE v.enter_time BETWEEN #{startDate} AND #{endDate}
+        AND v.yard_name = #{yardName}
+        AND v.enter_vip_type = '临时车'
+        AND v.in_operator_name != 'System' AND v.in_operator_name != 'system' AND v.enter_channel_name = #{channelName};
+    </select>
+    <select id="countByDateWan" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM report_car_in
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+        AND yard_name = #{yardName} AND enter_channel_name=#{channelName};
+    </select>
+    <select id="countByDateVIPWan" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM report_car_in
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+        AND yard_name = #{yardName}
+        AND enter_vip_type = '本地VIP'
+        AND in_operator_name = 'System'
+        AND enter_channel_name=#{channelName};
+    </select>
+
+</mapper>

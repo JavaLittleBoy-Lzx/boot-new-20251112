@@ -1,0 +1,205 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ips
+#    username: root
+#    password: 123456
+#    password:  Xuer@271.HS
+    password: Ips@_123
+    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+#    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+#    url: jdbc:mysql://www.xuerparking.cn:3306/project_lzx?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
+#    url: jdbc:mysql://118.178.179.235:3306/project_lzx?useUnicode=true&useSSL=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    jpa:
+      generate-ddl: false
+      hibernate:
+        ddl-auto: none
+      servlet:
+        multipart:
+          max-file-size: 100MB
+          max-request-size: 100MB
+#  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+  # 定时任务配置（访客VIP自动开通）
+  task:
+    scheduling:
+      pool:
+        size: 5  # 线程池大小，应对高频执行（每2秒一次）
+      thread-name-prefix: visitor-vip-auto-
+mybatis-plus:
+  mapper-locations: classpath:**/mapper/**/*.xml
+  type-aliases-package: com.parkingmanage.entity
+  # 全局逻辑删除的实体
+  global-config:
+    db-config:
+      logic-delete-field: deleted  # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
+      logic-delete-value: 1      # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0    # 逻辑未删除值(默认为 0)
+#      logic-delete-column:
+  # MyBatis配置
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名转换
+#文件存储位置
+file:
+  upload-path: /usr/local/nefu_system/uploadfile/
+  upload:
+    path: /usr/local/nefu_system/uploads  # 文件上传存储路径（使用绝对路径）
+    url-prefix: /uploads  # 文件访问URL前缀
+  # 配置SpringMVC文件上传限制，默认1M。注意MB要大写，不然报错。SpringBoot版本不同，配置项不同
+  spring:
+    servlet:
+      multipart:
+        max-file-size: 50MB
+        max-request-size: 50MB
+server:
+  port: 8675
+swagger:
+  basePackage: com.parkingmanage
+  title: 东北林业大学智慧车行数据可视化平台
+  description: 东北林业大学智慧车行数据可视化平台
+  version: V1.0
+# 微信配置
+wechat:
+  # 微信事件推送Token（用于验证微信服务器请求）
+  token: ParkingDemo2024Token   # 请修改为您自定义的复杂Token
+  # 微信小程序配置
+  miniapp:
+    appid: wx112d8a922018480e  # 替换为您的小程序AppID
+    secret: INVALID_SECRET_DISABLE_WECHAT_API   # 暂时禁用微信API，使用普通二维码
+    # access_token缓存时间（秒）
+    token-cache-time: 7000
+    # 是否启用微信小程序码（设为false使用普通二维码）
+    enabled: false
+  # 微信公众号配置（新增API接口配置）
+  public:
+    appid: wx7fcbbc5d885b630b  # 公众号AppID，用于API接口调用
+    secret: 19b9f00b48f266875b1b7e55eda6dd17  # 公众号AppSecret，用于获取access_token
+  # 微信网页授权配置
+  oauth:
+    appid: wx7fcbbc5d885b630b  # 公众号AppID（与public.appid相同）
+    appsecret: 19b9f00b48f266875b1b7e55eda6dd17  # 公众号AppSecret（与public.secret相同）
+    redirect-uri: https://www.xuerparking.cn/wechat-callback.html  # 授权回调地址（生产环境）
+    # redirect-uri: http://www.xuerparking.cn:8543/wechat-callback.html  # 本地开发地址
+  # 微信模板消息配置
+  template:
+    appointment:
+      approved: _gccosePZbxjn9hlUdlzqp22X6yTkaFNDaqxnXSH73Y # 预约审核通过通知模板ID
+      rejected: _gccosePZbxjn9hlUdlzqp22X6yTkaFNDaqxnXSH73Y  # 预约审核驳回通知模板ID
+    parking:
+      enter: b_t4iOogkcaCurSw7twZ2nrX6CaHNpXqDz3ykKZ6xoM  # 停车进场通知模板ID
+      leave: H5Y4W3tnBiyPPx2ktKbnHyTIRzzwVo1ziKk9M2TWG-c  # 停车离场通知模板ID
+      timeout: NvxG4IJ8SSfhVh1cdK0Jachz9Fr383oAHWZfO29D2Ws
+      violation: gCkB6i6GLjasUnoRyZnw-zNw_jYzZjPgW4abVPTiwNk  # 车辆违规停车告警通知模板ID
+    booking:
+      pending: CE5SnT-qqdOpBx4xgYm47k3H5xqhQK-p3NFNbVncxoM
+  # 停车超时提醒模板ID
+  # 微信公众号配置（停车超时提醒功能）
+  # 微信公众号AppID
+  appid: wx7fcbbc5d885b630b
+  # 微信公众号AppSecret
+  secret: 19b9f00b48f266875b1b7e55eda6dd17
+  # 超时提醒模板消息配置
+  timeout:
+    template:
+      # 模板消息ID（您提供的实际模板ID）
+      id: sjyHHEhrj24mFasi8FXaaz_ucOfuI1KvUUz8yeXMymY
+logging:
+  file:
+    path: /usr/local/nefu_system/logs
+    file-max-size: 5242880
+    name: nefuSystem.log
+  charset:
+    console: UTF-8
+    file: UTF-8
+# ACMS VIP车主信息接口配置（仅用于东北林业大学）
+acms:
+  api:
+    # ACMS接口地址（请替换为实际地址）
+    url: http://10.100.111.2:8092/vems
+#    url: http://cl.nefu.edu.cn:8092/vems
+    # 设备ID（请替换为实际值）
+    device_id: 7427EA1D1AE17427EA1D1AE17427EA1D
+    # 签名类型
+    sign_type: MD5
+    # 字符编码
+    charset: UTF-8
+
+# 海康威视配置
+hikvision:
+  api:
+    # 海康威视开放平台基础URL
+    base-url: https://10.100.111.5:443
+    
+    # 应用密钥（从海康威视开放平台获取）
+    app-key: 22668058
+    
+    # 应用密钥（从海康威视开放平台获取）
+    app-secret: T09WZsuZyne1guzhZ4Gc
+
+    # HTTP请求超时时间（毫秒）
+    timeout: 30000
+
+# 访客VIP自动开通服务配置
+visitor:
+  # 外部接口配置
+  api:
+    # 外部接口地址（需要替换为实际地址）
+    url: http://10.100.111.3:8888
+#    url: http://www.xuerparking.cn:8543
+    page-size: 1000
+    # 接口认证配置
+    app-key: F7FE3A3DF4924C2493744E25822BE3AD
+  
+  # 自动开通配置
+  auto:
+    # 是否启用自动开通功能（true-启用，false-禁用）
+    enabled: true
+    
+    # 智能调度配置（降低服务器负担）
+    schedule:
+      # 调度模式: static(固定间隔) / dynamic(动态间隔)
+      mode: dynamic
+
+      # 固定间隔配置（当mode=static时使用）
+      fixed-interval: 2000  # 固定2秒
+      
+      # 动态间隔配置（当mode=dynamic时使用）
+      min-interval: 2000     # 最小间隔2秒（有数据变化时）
+      max-interval: 30000    # 最大间隔30秒（长时间无变化时）
+      idle-interval: 10000   # 空闲间隔10秒（连续无变化时）
+      no-change-threshold: 5 # 连续无变化次数阈值
+      
+      # 时间段调度策略
+      time-based:
+        enabled: true
+        work-hours: "06:00-18:00"   # 工作时间，保持高频
+        off-hours: "18:00-23:00"    # 下班时间，中等频率
+        night-hours: "23:00-06:00"  # 夜间时间，低频率
+    
+    # 断路器配置（防止接口故障时持续调用）
+    circuit-breaker:
+      enabled: true
+      failure-threshold: 3   # 连续失败3次后开启断路器
+      timeout-seconds: 60    # 断路器开启后60秒尝试恢复
+      request-timeout: 5000  # 单次请求超时时间5秒
+    
+    # 变更检测配置（使用HashMap快速对比）
+    change-detection:
+      enabled: true
+      cache-size: 2000       # 缓存最近2000条数据
+    
+    # 存储模式选择 ⭐ 重要配置
+    storage:
+      # 模式: memory(纯内存) / hybrid(混合模式-数据库+内存)
+      mode: memory           # 默认使用纯内存模式
+      
+      # 混合模式配置（仅当mode=hybrid时生效）
+      hybrid:
+        enabled: false       # 是否启用混合模式
+        batch-size: 100      # 批量操作大小
+        cache-refresh-interval: 3600  # 缓存刷新间隔（秒）

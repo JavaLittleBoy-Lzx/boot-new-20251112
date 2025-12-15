@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parkingmanage.mapper.ReportCarOutMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.parkingmanage.entity.ReportCarOut">
+        <id column="id" property="id" />
+        <result column="leave_channel_name" property="leaveChannelName" />
+        <result column="leave_time" property="leaveTime" />
+        <result column="yard_name" property="yardName" />
+        <result column="leave_type" property="leaveType" />
+        <result column="enter_channel_code" property="enterChannelCode" />
+        <result column="enter_type" property="enterType" />
+        <result column="leave_vip_type" property="leaveVipType" />
+        <result column="enter_vip_type" property="enterVipType" />
+        <result column="car_license_number" property="carLicenseNumber" />
+        <result column="enter_car_type" property="enterCarType" />
+        <result column="total_amount" property="totalAmount" />
+        <result column="leave_no_vip_code_name" property="leaveNoVipCodeName" />
+        <result column="enter_no_vip_code" property="enterNoVipCode" />
+        <result column="enter_car_license_number" property="enterCarLicenseNumber" />
+        <result column="leave_car_license_number" property="leaveCarLicenseNumber" />
+        <result column="enter_no_vip_code_name" property="enterNoVipCodeName" />
+        <result column="parking_code" property="parkingCode" />
+        <result column="enter_channel_name" property="enterChannelName" />
+        <result column="enter_time" property="enterTime" />
+        <result column="enter_car_license_color" property="enterCarLicenseColor" />
+        <result column="leave_car_license_color" property="leaveCarLicenseColor" />
+        <result column="out_operator_name" property="outOperatorName" />
+        <result column="enter_channel_id" property="enterChannelId" />
+        <result column="in_operator_name" property="inOperatorName" />
+        <result column="in_operator_time" property="inOperatorTime" />
+        <result column="deleted" property="deleted" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, leave_channel_name, leave_time, leave_type, enter_channel_code, enter_type, leave_vip_type, enter_vip_type, car_license_number, enter_car_type, total_amount, leave_no_vip_code_name, enter_no_vip_code, enter_car_license_number, leave_car_license_number, enter_no_vip_code_name, parking_code, enter_channel_name, correct_type, enter_time, enter_car_license_color, leave_car_license_color, out_operator_name, enter_channel_id, in_operator_name, in_operator_time, deleted, create_time, update_time
+    </sql>
+    <select id="findByLicenseNumber" resultType="com.parkingmanage.entity.ReportCarOut">
+        select *
+            from report_car_out
+        where
+            parking_code = #{parkingCode}
+    </select>
+    <select id="queryListReportCarOutExportLinShi" resultType="com.parkingmanage.entity.ReportCarOutReservation">
+        SELECT DISTINCT v.*, r.notifier_name as notifierName, r.remark as remark
+        FROM report_car_out v
+                 LEFT JOIN
+                 (SELECT * FROM vehicle_reservation WHERE deleted = 0) r
+                 ON r.plate_number = v.enter_car_license_number
+        WHERE v.enter_time BETWEEN #{startDate} AND #{endDate} AND v.yard_name = #{yardName} AND v.enter_vip_type = '临时车' AND v.in_operator_name != 'System' AND v.in_operator_name != 'system';
+    </select>
+    <select id="queryListReportOutExport" resultType="com.parkingmanage.entity.ReportCarOutReservation">
+        SELECT DISTINCT v.*, r.notifier_name as notifierName, r.remark as remark
+        FROM report_car_out v
+                 LEFT JOIN
+                 (SELECT * FROM vehicle_reservation WHERE deleted = 0) r
+                 ON r.plate_number = v.enter_car_license_number
+        WHERE v.enter_time BETWEEN #{startDate} AND #{endDate} AND v.yard_name = #{yardName} AND v.enter_vip_type = '本地VIP' AND v.in_operator_name != 'System' AND v.in_operator_name != 'system';
+</select>
+    <select id="selectLeaveTime" resultType="com.parkingmanage.entity.ReportCarOut">
+    select *
+    from report_car_out
+    where enter_time BETWEEN #{startDate} AND  #{endDate} and enter_car_license_number=#{enterCarLicenseNumber} and enter_time=#{enterTime};
+    </select>
+    <select id="selectCarRecords" resultType="com.parkingmanage.entity.ReportCarOut">
+        SELECT *
+        from report_car_out
+        WHERE leave_time = (SELECT Min(leave_time)
+                            from report_car_out
+                            WHERE leave_time &gt; #{enterTime}
+                              AND enter_car_license_number = #{carCode});
+    </select>
+</mapper>

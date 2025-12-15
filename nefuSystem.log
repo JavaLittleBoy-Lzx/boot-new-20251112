@@ -1,0 +1,851 @@
+2025-12-08 08:15:35.286  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Starting ParkingManageApplication using Java 1.8.0_202 on LAPTOP-MJMJLK4P with PID 32420 (D:\nefu-edu-datav\boot-new-20251112\target\classes started by L in D:\nefu-edu-datav\boot-new-20251112)
+2025-12-08 08:15:35.290  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : No active profile set, falling back to default profiles: default
+2025-12-08 08:15:35.324  INFO 32420 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-08 08:15:35.324  INFO 32420 --- [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-08 08:15:36.472  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8675 (http)
+2025-12-08 08:15:36.477  INFO 32420 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-08 08:15:36.477  INFO 32420 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.53]
+2025-12-08 08:15:36.548  INFO 32420 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-08 08:15:36.548  INFO 32420 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1224 ms
+2025-12-08 08:15:37.616  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╔════════════════════════════════════════════════════════════════╗
+2025-12-08 08:15:37.616  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║       访客VIP自动开通服务 - 启动配置（简化模式）                ║
+2025-12-08 08:15:37.616  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╠════════════════════════════════════════════════════════════════╣
+2025-12-08 08:15:37.616  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 🔧 配置信息:                                                   ║
+2025-12-08 08:15:37.616  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 自动开通: ⏸️ 未启用                                          ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 存储模式: 💾 数据库存储                                   ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 执行间隔: 📌 固定10秒                                      ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 查询范围: ⏱️  首次1天 / 常规10秒                           ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 外部接口: http://10.100.111.3:8888                                   ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 分页大小: 1000 条/页                                         ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 处理模式: ✅ 仅新增（检查reservation_id是否存在）          ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 断路器: ✅ 已启用                                            ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 📋 功能说明:                                                   ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   1. 首次执行：查询最近1天数据                                 ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   2. 后续执行：每10秒查询前10秒到当前时间的数据                ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   3. 检查预约记录ID是否已存在于数据库                         ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   4. 不存在则添加到数据库，已存在则跳过                       ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   5. 不进行修改和删除操作                                    ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ ⏸️  状态: 自动开通未启用                                      ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 💡 提示: 若要启用，请设置 visitor.auto.enabled=true          ║
+2025-12-08 08:15:37.618  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╚════════════════════════════════════════════════════════════════╝
+2025-12-08 08:15:37.823  INFO 32420 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-12-08 08:15:37.869  INFO 32420 --- [restartedMain] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+2025-12-08 08:15:37.921  INFO 32420 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-08 08:15:38.111  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8675 (http) with context path ''
+2025-12-08 08:15:38.111  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2025-12-08 08:15:38.121  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2025-12-08 08:15:38.143  INFO 32420 --- [restartedMain] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2025-12-08 08:15:38.280  INFO 32420 --- [restartedMain] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: getDetailStatisticsUsingPOST_1
+2025-12-08 08:15:38.294  INFO 32420 --- [restartedMain] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2025-12-08 08:15:38.299  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Started ParkingManageApplication in 3.276 seconds (JVM running for 4.927)
+2025-12-08 08:15:38.945  INFO 32420 --- [RMI TCP Connection(3)-192.168.0.157] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-08 08:15:38.945  INFO 32420 --- [RMI TCP Connection(3)-192.168.0.157] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-08 08:15:38.946  INFO 32420 --- [RMI TCP Connection(3)-192.168.0.157] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-12-08 08:15:38.989  INFO 32420 --- [RMI TCP Connection(2)-192.168.0.157] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-12-08 08:15:52.642  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.AuthController            : 收到登录请求: username=admin
+2025-12-08 08:15:52.698  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 用户登录请求: username=admin, ip=0:0:0:0:0:0:0:1
+2025-12-08 08:15:55.693  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 用户登录成功: admin
+2025-12-08 08:15:57.107  INFO 32420 --- [http-nio-8675-exec-2] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:15:57.108  INFO 32420 --- [http-nio-8675-exec-2] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:16:47.954  INFO 32420 --- [http-nio-8675-exec-4] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:16:47.956  INFO 32420 --- [http-nio-8675-exec-4] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:16:47.978 ERROR 32420 --- [http-nio-8675-exec-4] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.IllegalArgumentException: rawPassword cannot be null
+	at org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.encode(BCryptPasswordEncoder.java:107) ~[spring-security-crypto-5.5.2.jar:5.5.2]
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:114) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:17:11.628  INFO 32420 --- [http-nio-8675-exec-6] c.p.controller.UserManagementController  : 更新用户: userId=1000
+2025-12-08 08:17:11.630  INFO 32420 --- [http-nio-8675-exec-6] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1000
+2025-12-08 08:17:11.700  INFO 32420 --- [http-nio-8675-exec-7] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:17:11.702  INFO 32420 --- [http-nio-8675-exec-7] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:17:14.164  INFO 32420 --- [http-nio-8675-exec-8] c.p.controller.UserManagementController  : 更新用户: userId=1000
+2025-12-08 08:17:14.166  INFO 32420 --- [http-nio-8675-exec-8] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1000
+2025-12-08 08:17:14.186  INFO 32420 --- [http-nio-8675-exec-9] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:17:14.186  INFO 32420 --- [http-nio-8675-exec-9] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:18:17.580  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:18:17.581  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:18:17.628  WARN 32420 --- [http-nio-8675-exec-1] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 63404
+2025-12-08 08:18:41.678  INFO 32420 --- [Thread-11] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-12-08 08:18:41.685  INFO 32420 --- [Thread-11] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-12-08 08:18:42.162  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Starting ParkingManageApplication using Java 1.8.0_202 on LAPTOP-MJMJLK4P with PID 32420 (D:\nefu-edu-datav\boot-new-20251112\target\classes started by L in D:\nefu-edu-datav\boot-new-20251112)
+2025-12-08 08:18:42.162  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : No active profile set, falling back to default profiles: default
+2025-12-08 08:18:44.563  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8675 (http)
+2025-12-08 08:18:44.565  INFO 32420 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-08 08:18:44.566  INFO 32420 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.53]
+2025-12-08 08:18:44.674  INFO 32420 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-08 08:18:44.675  INFO 32420 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2505 ms
+2025-12-08 08:18:47.257  WARN 32420 --- [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'authController': Unsatisfied dependency expressed through field 'userService'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.parkingmanage.service.UserService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2025-12-08 08:18:47.257  INFO 32420 --- [restartedMain] com.alibaba.druid.pool.DruidDataSource   : {dataSource-0} closing ...
+2025-12-08 08:18:47.258  INFO 32420 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-08 08:18:47.278  INFO 32420 --- [restartedMain] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2025-12-08 08:18:47.340 ERROR 32420 --- [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field userService in com.parkingmanage.controller.AuthController required a bean of type 'com.parkingmanage.service.UserService' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'com.parkingmanage.service.UserService' in your configuration.
+
+2025-12-08 08:18:55.322  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Starting ParkingManageApplication using Java 1.8.0_202 on LAPTOP-MJMJLK4P with PID 32420 (D:\nefu-edu-datav\boot-new-20251112\target\classes started by L in D:\nefu-edu-datav\boot-new-20251112)
+2025-12-08 08:18:55.322  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : No active profile set, falling back to default profiles: default
+2025-12-08 08:18:55.979  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8675 (http)
+2025-12-08 08:18:55.979  INFO 32420 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-08 08:18:55.979  INFO 32420 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.53]
+2025-12-08 08:18:56.023  INFO 32420 --- [restartedMain] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2025-12-08 08:18:56.023  INFO 32420 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 699 ms
+2025-12-08 08:18:58.548  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╔════════════════════════════════════════════════════════════════╗
+2025-12-08 08:18:58.548  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║       访客VIP自动开通服务 - 启动配置（简化模式）                ║
+2025-12-08 08:18:58.549  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╠════════════════════════════════════════════════════════════════╣
+2025-12-08 08:18:58.549  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 🔧 配置信息:                                                   ║
+2025-12-08 08:18:58.549  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 自动开通: ⏸️ 未启用                                          ║
+2025-12-08 08:18:58.550  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 存储模式: 💾 数据库存储                                   ║
+2025-12-08 08:18:58.551  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 执行间隔: 📌 固定10秒                                      ║
+2025-12-08 08:18:58.551  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 查询范围: ⏱️  首次1天 / 常规10秒                           ║
+2025-12-08 08:18:58.551  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 外部接口: http://10.100.111.3:8888                                   ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 分页大小: 1000 条/页                                         ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 处理模式: ✅ 仅新增（检查reservation_id是否存在）          ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 断路器: ✅ 已启用                                            ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 📋 功能说明:                                                   ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   1. 首次执行：查询最近1天数据                                 ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   2. 后续执行：每10秒查询前10秒到当前时间的数据                ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   3. 检查预约记录ID是否已存在于数据库                         ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   4. 不存在则添加到数据库，已存在则跳过                       ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   5. 不进行修改和删除操作                                    ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:18:58.552  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ ⏸️  状态: 自动开通未启用                                      ║
+2025-12-08 08:18:58.554  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 💡 提示: 若要启用，请设置 visitor.auto.enabled=true          ║
+2025-12-08 08:18:58.554  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╚════════════════════════════════════════════════════════════════╝
+2025-12-08 08:18:58.813  INFO 32420 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-12-08 08:18:58.879  INFO 32420 --- [restartedMain] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+2025-12-08 08:18:58.954  INFO 32420 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-08 08:18:59.193  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8675 (http) with context path ''
+2025-12-08 08:18:59.193  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2025-12-08 08:18:59.195  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2025-12-08 08:18:59.220  INFO 32420 --- [restartedMain] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2025-12-08 08:18:59.513  INFO 32420 --- [restartedMain] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: getDetailStatisticsUsingPOST_1
+2025-12-08 08:18:59.542  INFO 32420 --- [restartedMain] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2025-12-08 08:18:59.542  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Started ParkingManageApplication in 4.255 seconds (JVM running for 206.171)
+2025-12-08 08:18:59.548  INFO 32420 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-12-08 08:21:30.519  INFO 32420 --- [http-nio-8675-exec-1] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-08 08:21:30.521  INFO 32420 --- [http-nio-8675-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-08 08:21:30.523  INFO 32420 --- [http-nio-8675-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-12-08 08:21:30.527  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:21:30.532  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:21:30.540  INFO 32420 --- [http-nio-8675-exec-1] com.alibaba.druid.pool.DruidDataSource   : {dataSource-2} inited
+2025-12-08 08:24:52.378  INFO 32420 --- [http-nio-8675-exec-3] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:24:52.380  INFO 32420 --- [http-nio-8675-exec-3] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:24:52.382  WARN 32420 --- [http-nio-8675-exec-3] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 201832
+2025-12-08 08:30:32.774  INFO 32420 --- [http-nio-8675-exec-5] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:30:32.775  INFO 32420 --- [http-nio-8675-exec-5] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:30:32.776  WARN 32420 --- [http-nio-8675-exec-5] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 340382
+2025-12-08 08:36:36.194  INFO 32420 --- [http-nio-8675-exec-7] c.p.controller.UserManagementController  : 更新用户: userId=1000
+2025-12-08 08:36:36.196  WARN 32420 --- [http-nio-8675-exec-7] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 363410
+2025-12-08 08:36:36.207  INFO 32420 --- [http-nio-8675-exec-7] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1000
+2025-12-08 08:36:36.227  INFO 32420 --- [http-nio-8675-exec-8] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:36:36.228  INFO 32420 --- [http-nio-8675-exec-8] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:36:39.129  INFO 32420 --- [http-nio-8675-exec-9] c.p.controller.UserManagementController  : 更新用户: userId=1000
+2025-12-08 08:36:39.131  INFO 32420 --- [http-nio-8675-exec-9] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1000
+2025-12-08 08:36:39.157  INFO 32420 --- [http-nio-8675-exec-10] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:36:39.158  INFO 32420 --- [http-nio-8675-exec-10] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:37:03.420  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:37:03.420  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:37:03.424 ERROR 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 创建用户失败：密码为空, username=nefu_admin
+2025-12-08 08:37:03.428 ERROR 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.RuntimeException: 密码不能为空
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:116) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:37:09.713  INFO 32420 --- [http-nio-8675-exec-2] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:37:09.715  INFO 32420 --- [http-nio-8675-exec-2] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:37:09.717 ERROR 32420 --- [http-nio-8675-exec-2] c.p.service.impl.UserServiceImpl         : 创建用户失败：密码为空, username=nefu_admin
+2025-12-08 08:37:09.724 ERROR 32420 --- [http-nio-8675-exec-2] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.RuntimeException: 密码不能为空
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:116) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:37:17.124  INFO 32420 --- [http-nio-8675-exec-3] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:37:17.124  INFO 32420 --- [http-nio-8675-exec-3] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:37:17.128 ERROR 32420 --- [http-nio-8675-exec-3] c.p.service.impl.UserServiceImpl         : 创建用户失败：密码为空, username=nefu_admin
+2025-12-08 08:37:17.135 ERROR 32420 --- [http-nio-8675-exec-3] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.RuntimeException: 密码不能为空
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:116) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:37:48.309  INFO 32420 --- [http-nio-8675-exec-5] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:37:48.309  INFO 32420 --- [http-nio-8675-exec-5] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:37:48.311 ERROR 32420 --- [http-nio-8675-exec-5] c.p.service.impl.UserServiceImpl         : 创建用户失败：密码为空, username=nefu_admin
+2025-12-08 08:37:48.316 ERROR 32420 --- [http-nio-8675-exec-5] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.RuntimeException: 密码不能为空
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:116) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:38:49.663  INFO 32420 --- [http-nio-8675-exec-7] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:38:49.663  INFO 32420 --- [http-nio-8675-exec-7] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:38:49.666  WARN 32420 --- [http-nio-8675-exec-7] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 61353
+2025-12-08 08:39:06.138  INFO 32420 --- [http-nio-8675-exec-8] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:39:06.139  INFO 32420 --- [http-nio-8675-exec-8] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:39:15.258  INFO 32420 --- [http-nio-8675-exec-9] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:39:15.258  INFO 32420 --- [http-nio-8675-exec-9] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:39:29.782  INFO 32420 --- [http-nio-8675-exec-10] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:39:29.782  INFO 32420 --- [http-nio-8675-exec-10] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:41:12.448  INFO 32420 --- [http-nio-8675-exec-2] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:41:12.448  INFO 32420 --- [http-nio-8675-exec-2] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 08:41:12.449  WARN 32420 --- [http-nio-8675-exec-2] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 102665
+2025-12-08 08:41:24.075  INFO 32420 --- [http-nio-8675-exec-3] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:41:24.077  INFO 32420 --- [http-nio-8675-exec-3] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:41:24.079 ERROR 32420 --- [http-nio-8675-exec-3] c.p.service.impl.UserServiceImpl         : 创建用户失败：密码为空, username=nefu_admin
+2025-12-08 08:41:24.083 ERROR 32420 --- [http-nio-8675-exec-3] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.RuntimeException: 密码不能为空
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:116) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:41:55.612  INFO 32420 --- [http-nio-8675-exec-4] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:41:55.613  INFO 32420 --- [http-nio-8675-exec-4] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:41:55.615 ERROR 32420 --- [http-nio-8675-exec-4] c.p.service.impl.UserServiceImpl         : 创建用户失败：密码为空, username=nefu_admin
+2025-12-08 08:41:55.619 ERROR 32420 --- [http-nio-8675-exec-4] c.p.controller.UserManagementController  : 创建用户失败
+
+java.lang.RuntimeException: 密码不能为空
+	at com.parkingmanage.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:116) ~[classes/:na]
+	at com.parkingmanage.service.impl.UserServiceImpl$$FastClassBySpringCGLIB$$fc481313.invoke(<generated>) ~[classes/:na]
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218) ~[spring-core-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:779) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:750) ~[spring-aop-5.3.10.jar:5.3.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:692) ~[spring-aop-5.3.10.jar:5.3.10]
+	at com.parkingmanage.service.impl.UserServiceImpl$$EnhancerBySpringCGLIB$$9a9e1195.createUser(<generated>) ~[classes/:na]
+	at com.parkingmanage.controller.UserManagementController.createUser(UserManagementController.java:54) ~[classes/:na]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_202]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_202]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_202]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_202]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1067) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:963) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006) [spring-webmvc-5.3.10.jar:5.3.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:681) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) [spring-webmvc-5.3.10.jar:5.3.10]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764) [tomcat-embed-core-9.0.53.jar:4.0.FR]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) [tomcat-embed-websocket-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.boot.actuate.metrics.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:96) [spring-boot-actuator-2.5.5.jar:2.5.5]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-5.3.10.jar:5.3.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) [spring-web-5.3.10.jar:5.3.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:357) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:382) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:893) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1726) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.53.jar:9.0.53]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_202]
+
+2025-12-08 08:41:56.978  INFO 32420 --- [Thread-27] com.alibaba.druid.pool.DruidDataSource   : {dataSource-2} closing ...
+2025-12-08 08:41:56.979  INFO 32420 --- [Thread-27] com.alibaba.druid.pool.DruidDataSource   : {dataSource-2} closed
+2025-12-08 08:41:57.163  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Starting ParkingManageApplication using Java 1.8.0_202 on LAPTOP-MJMJLK4P with PID 32420 (D:\nefu-edu-datav\boot-new-20251112\target\classes started by L in D:\nefu-edu-datav\boot-new-20251112)
+2025-12-08 08:41:57.163  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : No active profile set, falling back to default profiles: default
+2025-12-08 08:41:57.613  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8675 (http)
+2025-12-08 08:41:57.614  INFO 32420 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-08 08:41:57.614  INFO 32420 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.53]
+2025-12-08 08:41:57.639  INFO 32420 --- [restartedMain] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2025-12-08 08:41:57.639  INFO 32420 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 475 ms
+2025-12-08 08:41:58.166  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╔════════════════════════════════════════════════════════════════╗
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║       访客VIP自动开通服务 - 启动配置（简化模式）                ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╠════════════════════════════════════════════════════════════════╣
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 🔧 配置信息:                                                   ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 自动开通: ⏸️ 未启用                                          ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 存储模式: 💾 数据库存储                                   ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 执行间隔: 📌 固定10秒                                      ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 查询范围: ⏱️  首次1天 / 常规10秒                           ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 外部接口: http://10.100.111.3:8888                                   ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 分页大小: 1000 条/页                                         ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 处理模式: ✅ 仅新增（检查reservation_id是否存在）          ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 断路器: ✅ 已启用                                            ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 📋 功能说明:                                                   ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   1. 首次执行：查询最近1天数据                                 ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   2. 后续执行：每10秒查询前10秒到当前时间的数据                ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   3. 检查预约记录ID是否已存在于数据库                         ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   4. 不存在则添加到数据库，已存在则跳过                       ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   5. 不进行修改和删除操作                                    ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ ⏸️  状态: 自动开通未启用                                      ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 💡 提示: 若要启用，请设置 visitor.auto.enabled=true          ║
+2025-12-08 08:41:58.167  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╚════════════════════════════════════════════════════════════════╝
+2025-12-08 08:41:58.225  INFO 32420 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-12-08 08:41:58.241  INFO 32420 --- [restartedMain] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+2025-12-08 08:41:58.260  INFO 32420 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-08 08:41:58.307  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8675 (http) with context path ''
+2025-12-08 08:41:58.309  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2025-12-08 08:41:58.309  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2025-12-08 08:41:58.314  INFO 32420 --- [restartedMain] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2025-12-08 08:41:58.363  INFO 32420 --- [restartedMain] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: getDetailStatisticsUsingPOST_1
+2025-12-08 08:41:58.369  INFO 32420 --- [restartedMain] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2025-12-08 08:41:58.370  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Started ParkingManageApplication in 1.229 seconds (JVM running for 1586.915)
+2025-12-08 08:41:58.370  INFO 32420 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-12-08 08:42:00.222  INFO 32420 --- [Thread-34] com.alibaba.druid.pool.DruidDataSource   : {dataSource-0} closing ...
+2025-12-08 08:42:00.423  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Starting ParkingManageApplication using Java 1.8.0_202 on LAPTOP-MJMJLK4P with PID 32420 (D:\nefu-edu-datav\boot-new-20251112\target\classes started by L in D:\nefu-edu-datav\boot-new-20251112)
+2025-12-08 08:42:00.423  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : No active profile set, falling back to default profiles: default
+2025-12-08 08:42:01.297  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8675 (http)
+2025-12-08 08:42:01.298  INFO 32420 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-08 08:42:01.298  INFO 32420 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.53]
+2025-12-08 08:42:01.397  INFO 32420 --- [restartedMain] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring embedded WebApplicationContext
+2025-12-08 08:42:01.398  INFO 32420 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 973 ms
+2025-12-08 08:42:01.932  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╔════════════════════════════════════════════════════════════════╗
+2025-12-08 08:42:01.932  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║       访客VIP自动开通服务 - 启动配置（简化模式）                ║
+2025-12-08 08:42:01.932  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╠════════════════════════════════════════════════════════════════╣
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 🔧 配置信息:                                                   ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 自动开通: ⏸️ 未启用                                          ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 存储模式: 💾 数据库存储                                   ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 执行间隔: 📌 固定10秒                                      ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 查询范围: ⏱️  首次1天 / 常规10秒                           ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 外部接口: http://10.100.111.3:8888                                   ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 分页大小: 1000 条/页                                         ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 处理模式: ✅ 仅新增（检查reservation_id是否存在）          ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   - 断路器: ✅ 已启用                                            ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 📋 功能说明:                                                   ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   1. 首次执行：查询最近1天数据                                 ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   2. 后续执行：每10秒查询前10秒到当前时间的数据                ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   3. 检查预约记录ID是否已存在于数据库                         ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   4. 不存在则添加到数据库，已存在则跳过                       ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║   5. 不进行修改和删除操作                                    ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║                                                                ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ ⏸️  状态: 自动开通未启用                                      ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ║ 💡 提示: 若要启用，请设置 visitor.auto.enabled=true          ║
+2025-12-08 08:42:01.933  INFO 32420 --- [restartedMain] c.p.service.VisitorVipAutoService        : ╚════════════════════════════════════════════════════════════════╝
+2025-12-08 08:42:01.982  INFO 32420 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-12-08 08:42:01.995  INFO 32420 --- [restartedMain] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+2025-12-08 08:42:02.010  INFO 32420 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-12-08 08:42:02.053  INFO 32420 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8675 (http) with context path ''
+2025-12-08 08:42:02.053  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2025-12-08 08:42:02.054  INFO 32420 --- [restartedMain] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2025-12-08 08:42:02.057  INFO 32420 --- [restartedMain] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2025-12-08 08:42:02.109  INFO 32420 --- [restartedMain] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: getDetailStatisticsUsingPOST_1
+2025-12-08 08:42:02.115  INFO 32420 --- [restartedMain] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2025-12-08 08:42:02.116  INFO 32420 --- [restartedMain] c.p.ParkingManageApplication             : Started ParkingManageApplication in 1.715 seconds (JVM running for 1590.661)
+2025-12-08 08:42:02.117  INFO 32420 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-12-08 08:42:09.891  INFO 32420 --- [http-nio-8675-exec-1] o.a.c.c.C.[Tomcat-1].[localhost].[/]     : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-08 08:42:09.894  INFO 32420 --- [http-nio-8675-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-08 08:42:09.896  INFO 32420 --- [http-nio-8675-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-12-08 08:42:09.910  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 创建用户: nefu_admin
+2025-12-08 08:42:09.910  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 接收到的用户对象 - username: nefu_admin, role: user, status: 1
+2025-12-08 08:42:09.910  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 密码字段检查 - password: ***, isNull: false, isEmpty: false
+2025-12-08 08:42:09.926  INFO 32420 --- [http-nio-8675-exec-1] com.alibaba.druid.pool.DruidDataSource   : {dataSource-3} inited
+2025-12-08 08:42:09.940  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 创建用户: nefu_admin
+2025-12-08 08:42:10.133  INFO 32420 --- [http-nio-8675-exec-2] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 08:42:10.133  INFO 32420 --- [http-nio-8675-exec-2] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:14:21.814  INFO 32420 --- [http-nio-8675-exec-4] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:14:21.815  INFO 32420 --- [http-nio-8675-exec-4] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:25:26.389  INFO 32420 --- [http-nio-8675-exec-6] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:25:26.389  INFO 32420 --- [http-nio-8675-exec-6] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:25:26.391  WARN 32420 --- [http-nio-8675-exec-6] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 664565
+2025-12-08 09:27:02.007  INFO 32420 --- [http-nio-8675-exec-8] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:27:02.008  INFO 32420 --- [http-nio-8675-exec-8] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:27:02.010  WARN 32420 --- [http-nio-8675-exec-8] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 95609
+2025-12-08 09:27:10.711  INFO 32420 --- [http-nio-8675-exec-9] c.p.controller.UserManagementController  : 更新用户: userId=1001
+2025-12-08 09:27:10.712  INFO 32420 --- [http-nio-8675-exec-9] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1001
+2025-12-08 09:27:10.728  INFO 32420 --- [http-nio-8675-exec-10] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:27:10.729  INFO 32420 --- [http-nio-8675-exec-10] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:27:11.628  INFO 32420 --- [http-nio-8675-exec-1] c.p.controller.UserManagementController  : 更新用户: userId=1001
+2025-12-08 09:27:11.630  INFO 32420 --- [http-nio-8675-exec-1] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1001
+2025-12-08 09:27:11.654  INFO 32420 --- [http-nio-8675-exec-2] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:27:11.654  INFO 32420 --- [http-nio-8675-exec-2] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:32:54.796  INFO 32420 --- [http-nio-8675-exec-4] c.p.controller.UserManagementController  : 更新用户: userId=1001
+2025-12-08 09:32:54.798  WARN 32420 --- [http-nio-8675-exec-4] c.a.druid.pool.DruidAbstractDataSource   : discard long time none received connection. , jdbcUrl : jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true, version : 1.2.5, lastPacketReceivedIdleMillis : 343142
+2025-12-08 09:32:54.810  INFO 32420 --- [http-nio-8675-exec-4] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1001
+2025-12-08 09:32:54.825  INFO 32420 --- [http-nio-8675-exec-5] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:32:54.826  INFO 32420 --- [http-nio-8675-exec-5] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:32:56.858  INFO 32420 --- [http-nio-8675-exec-6] c.p.controller.AuthController            : 收到登录请求: username=nefu_admin
+2025-12-08 09:32:56.859  INFO 32420 --- [http-nio-8675-exec-6] c.p.service.impl.UserServiceImpl         : 用户登录请求: username=nefu_admin, ip=0:0:0:0:0:0:0:1
+2025-12-08 09:32:56.862  WARN 32420 --- [http-nio-8675-exec-6] c.p.service.impl.UserServiceImpl         : 用户已被禁用: nefu_admin
+2025-12-08 09:32:56.863 ERROR 32420 --- [http-nio-8675-exec-6] c.p.controller.AuthController            : 登录失败: 账号已被禁用，请联系管理员
+2025-12-08 09:33:01.180  INFO 32420 --- [http-nio-8675-exec-7] c.p.controller.UserManagementController  : 更新用户: userId=1001
+2025-12-08 09:33:01.181  INFO 32420 --- [http-nio-8675-exec-7] c.p.service.impl.UserServiceImpl         : 更新用户信息: userId=1001
+2025-12-08 09:33:01.207  INFO 32420 --- [http-nio-8675-exec-8] c.p.controller.UserManagementController  : 获取用户列表, 关键字: 
+2025-12-08 09:33:01.207  INFO 32420 --- [http-nio-8675-exec-8] c.p.service.impl.UserServiceImpl         : 获取用户列表, 关键字: 
+2025-12-08 09:33:09.275  INFO 32420 --- [http-nio-8675-exec-9] c.p.controller.AuthController            : 收到登录请求: username=nefu_admin
+2025-12-08 09:33:09.277  INFO 32420 --- [http-nio-8675-exec-9] c.p.service.impl.UserServiceImpl         : 用户登录请求: username=nefu_admin, ip=0:0:0:0:0:0:0:1
+2025-12-08 09:33:09.472  INFO 32420 --- [http-nio-8675-exec-9] c.p.service.impl.UserServiceImpl         : 用户登录成功: nefu_admin
+2025-12-08 10:26:44.355  INFO 32420 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-3} closing ...
+2025-12-08 10:26:44.356  INFO 32420 --- [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-3} closed

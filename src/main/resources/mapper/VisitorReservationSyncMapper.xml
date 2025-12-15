@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parkingmanage.mapper.VisitorReservationSyncMapper">
+
+    <!-- 批量插入或更新（MySQL特有语法） -->
+    <insert id="batchInsertOrUpdate" parameterType="java.util.List">
+        INSERT INTO visitor_reservation_sync (
+            reservation_id, visitor_name, visitor_phone, visitor_id_card, pass_dep,
+            car_number, vip_type_name, park_name, pass_name, apply_state_name, apply_from_name,
+            start_time, end_time, gateway_transit_begin_time, gateway_transit_end_time,
+            remark1, remark2, remark3, data_hash, vip_opened, api_called, external_create_time,
+            person_visit_status, person_visit_times, car_visit_status, car_visit_times
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.reservationId}, #{item.visitorName}, #{item.visitorPhone},
+                #{item.visitorIdCard}, #{item.passDep}, #{item.carNumber},
+                #{item.vipTypeName}, #{item.parkName}, #{item.passName}, #{item.applyStateName}, #{item.applyFromName},
+                #{item.startTime}, #{item.endTime}, #{item.gatewayTransitBeginTime}, #{item.gatewayTransitEndTime},
+                #{item.remark1}, #{item.remark2}, #{item.remark3},
+                #{item.dataHash}, #{item.vipOpened}, #{item.apiCalled}, #{item.externalCreateTime},
+                #{item.personVisitStatus}, #{item.personVisitTimes}, #{item.carVisitStatus}, #{item.carVisitTimes}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            visitor_name = VALUES(visitor_name),
+            visitor_phone = VALUES(visitor_phone),
+            visitor_id_card = VALUES(visitor_id_card),
+            pass_dep = VALUES(pass_dep),
+            car_number = VALUES(car_number),
+            vip_type_name = VALUES(vip_type_name),
+            park_name = VALUES(park_name),
+            pass_name = VALUES(pass_name),
+            apply_state_name = VALUES(apply_state_name),
+            apply_from_name = VALUES(apply_from_name),
+            start_time = VALUES(start_time),
+            end_time = VALUES(end_time),
+            gateway_transit_begin_time = VALUES(gateway_transit_begin_time),
+            gateway_transit_end_time = VALUES(gateway_transit_end_time),
+            remark1 = VALUES(remark1),
+            remark2 = VALUES(remark2),
+            remark3 = VALUES(remark3),
+            data_hash = VALUES(data_hash),
+            vip_opened = VALUES(vip_opened),
+            -- 如果数据发生变化（data_hash不同），则重置api_called=0，否则保持原值
+            api_called = IF(VALUES(data_hash) != data_hash, 0, COALESCE(api_called, 0)),
+            external_create_time = VALUES(external_create_time),
+            person_visit_status = VALUES(person_visit_status),
+            person_visit_times = VALUES(person_visit_times),
+            car_visit_status = VALUES(car_visit_status),
+            car_visit_times = VALUES(car_visit_times),
+            update_time = CURRENT_TIMESTAMP,
+            deleted = 0
+    </insert>
+
+    <!-- 根据预约ID列表查询 -->
+    <select id="selectByReservationIds" resultType="com.parkingmanage.entity.VisitorReservationSync">
+        SELECT * FROM visitor_reservation_sync
+        WHERE deleted = 0
+        AND reservation_id IN
+        <foreach collection="reservationIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 获取所有预约ID和数据指纹的映射 -->
+    <select id="selectAllIdAndHash" resultType="java.util.HashMap">
+        SELECT reservation_id as reservationId, data_hash as dataHash
+        FROM visitor_reservation_sync
+        WHERE deleted = 0
+    </select>
+
+    <!-- 批量逻辑删除 -->
+    <update id="batchDeleteByReservationIds">
+        UPDATE visitor_reservation_sync
+        SET deleted = 1, update_time = CURRENT_TIMESTAMP
+        WHERE reservation_id IN
+        <foreach collection="reservationIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 根据访客姓名查询车牌号 -->
+    <select id="selectCarNumberByVisitorName" resultType="java.lang.String">
+        SELECT car_number
+        FROM visitor_reservation_sync
+        WHERE deleted = 0
+        AND visitor_name = #{visitorName}
+        AND car_number IS NOT NULL
+        AND car_number != ''
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- 根据访客姓名和时间范围查询访客预约记录 -->
+    <!-- 优先使用gateway_transit_begin_time/gateway_transit_end_time进行时间匹配，如果没有则使用start_time/end_time -->
+    <select id="selectByVisitorNameAndTimeRange" resultType="com.parkingmanage.entity.VisitorReservationSync">
+        SELECT *
+        FROM visitor_reservation_sync
+        WHERE deleted = 0
+        AND visitor_name = #{visitorName}
+        AND (
+            -- 优先使用网关通行时间进行匹配
+            (gateway_transit_begin_time IS NOT NULL 
+             AND gateway_transit_end_time IS NOT NULL 
+             AND #{eventTime} >= gateway_transit_begin_time 
+             AND #{eventTime} &lt;= gateway_transit_end_time)
+            OR
+            -- 如果没有网关通行时间，则使用预约时间进行匹配
+            ((gateway_transit_begin_time IS NULL OR gateway_transit_end_time IS NULL)
+             AND start_time IS NOT NULL 
+             AND end_time IS NOT NULL 
+             AND #{eventTime} >= start_time 
+             AND #{eventTime} &lt;= end_time)
+        )
+        ORDER BY 
+            -- 优先返回有时间范围限制的记录（网关通行时间 > 预约时间）
+            CASE 
+                WHEN gateway_transit_begin_time IS NOT NULL AND gateway_transit_end_time IS NOT NULL THEN 0
+                WHEN start_time IS NOT NULL AND end_time IS NOT NULL THEN 1
+                ELSE 2
+            END,
+            create_time DESC
+        LIMIT 1
+    </select>
+
+</mapper>
+

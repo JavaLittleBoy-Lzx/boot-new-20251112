@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.parkingmanage.mapper.VehicleReservationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.parkingmanage.entity.VehicleReservation">
+        <id column="id" property="id" />
+        <result column="yard_code" property="yardCode" />
+        <result column="yard_name" property="yardName" />
+        <result column="channel_name" property="channelName" />
+        <result column="enter_time" property="enterTime" />
+        <result column="reserve_time" property="reserveTime" />
+        <result column="plate_number" property="plateNumber" />
+        <result column="vehicle_classification" property="vehicleClassification" />
+        <result column="merchant_name" property="merchantName" />
+        <result column="release_reason" property="releaseReason" />
+        <result column="enter_vip_type" property="enterVipType" />
+        <result column="notifier_name" property="notifierName" />
+        <result column="reserve_flag" property="reserveFlag" />
+        <result column="appointment_time" property="appointmentTime" />
+        <result column="remark" property="remark" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, yard_code, yard_name, channel_name, plate_number, vehicle_classification, merchant_name, release_reason, notifier_name, appointment_time, remark
+    </sql>
+    <update id="updateEnterTime">
+        update  vehicle_reservation
+        set enter_time = #{parse},update_time = NOW()
+        where
+        plate_number = #{enterCarLicenseNumber} and deleted = 0;
+    </update>
+    <update id="updateByCarNumber">
+        update  vehicle_reservation
+        set enter_time = #{enterTime},update_time = NOW(),reserve_time=#{reserveTime},reserve_flag = 1,enter_vip_type=#{enterVipType}
+        where
+            plate_number = #{carNumber} and deleted = 0
+    </update>
+    <update id="updateEnterVipType">
+        UPDATE vehicle_reservation
+        SET enter_vip_type = CASE
+        WHEN #{enterVipType} = 2 AND (enter_vip_type = '临时车' OR enter_vip_type = 'VIP超位车辆') THEN '本地VIP'
+        ELSE enter_vip_type
+        END, update_time = NOW()
+        WHERE plate_number = #{enterCarLicenseNumber}
+        AND NOT (#{enterVipType} = 1 AND (enter_vip_type = '临时车' OR enter_vip_type = 'VIP超位车辆')) and deleted = 0
+    </update>
+    <select id="duplicate" resultType="java.lang.Integer">
+        select count(*) from vehicle_reservation  where yard_code=#{yardCode} and yard_name=#{yardName}
+        and channel_name= #{channelName} and plate_number=#{plateNumber} and vehicle_classification=#{vehicleClassification}
+        and merchant_name=#{merchantName} and release_reason=#{releaseReason} and  notifier_name=#{notifierName} and enter_time=#{enterTime}
+        and remark=#{remark} and deleted = 0
+        <if test="id!=null and id !=''">
+        and id &lt;&gt;#{id}
+        </if>
+    </select>
+    <select id="findByLicenseNumber" resultType="com.parkingmanage.entity.ReportCarInData">
+        select * from vehicle_reservation where plate_number=#{enterCarLicenseNumber} and id is null and deleted = 0
+    </select>
+    <select id="countByDate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM vehicle_reservation
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+          AND yard_name = #{yardName} and deleted = 0;
+    </select>
+    <select id="countByVIPOutIndex" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM vehicle_reservation
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+          AND yard_name = #{yardName} AND enter_vip_type = 'VIP超位车辆' and deleted = 0
+    </select>
+    <select id="countByLinShiOutIndex" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM vehicle_reservation
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate}
+          AND yard_name = #{yardName} AND enter_vip_type = '临时车' and deleted = 0
+    </select>
+    <select id="queryListVehicleReservationExportLinShi"
+            resultType="com.parkingmanage.entity.VehicleReservation">
+        SELECT *
+        FROM vehicle_reservation
+        WHERE enter_time BETWEEN #{startDate} AND #{endDate} AND yard_name = #{yardName} AND enter_vip_type = '临时车' and deleted = 0;
+    </select>
+    <select id="queryListVehicleReservationExport" resultType="com.parkingmanage.entity.VehicleReservation">
+        SELECT v.*, r.merchant_name as merchantName,r.release_reason as releaseReason
+        FROM vehicle_reservation r
+        LEFT JOIN report_car_out v ON r.id = v.id
+        WHERE v.enter_car_license_number = r.plate_number and deleted = 0
+    </select>
+    <select id="selectByCarName" resultType="com.parkingmanage.entity.VehicleReservation">
+        select *
+        from  vehicle_reservation
+        where plate_number = #{enterCarLicenseNumber} and deleted = 0 and reserve_flag = 0;
+    </select>
+    <select id="selectVehicleReservation" resultType="com.parkingmanage.entity.VehicleReservation">
+        select *
+        from  vehicle_reservation
+        where plate_number = #{enterCarLicenseNumber} and yard_code = #{yardCode} and  deleted = 0 and reserve_flag = 0;
+    </select>
+</mapper>
