@@ -137,7 +137,7 @@ hikvision:
     
     # 应用密钥（从海康威视开放平台获取）
     app-key: 22668058
-    
+
     # 应用密钥（从海康威视开放平台获取）
     app-secret: T09WZsuZyne1guzhZ4Gc
 

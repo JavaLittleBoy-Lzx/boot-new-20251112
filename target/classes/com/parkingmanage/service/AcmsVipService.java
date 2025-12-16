@@ -1543,10 +1543,9 @@ public class AcmsVipService {
     }
 
     /**
-     * 根据车牌号批量退费VIP票
+     * 根据车牌号批量退费VIP票1
      * 查询该车牌号下vip_type_name为"二道岗可通行车辆"且ticket_status为"1"(已生效)的VIP票，并进行批量退费
      * 对应ACMS接口：REFUND_VIP_TICKET
-     * 
      * @param plateNumber 车牌号（可能包含多个车牌号，用逗号分隔）
      * @param operator 操作人
      * @param operateTime 操作时间（格式：yyyy-MM-dd HH:mm:ss）

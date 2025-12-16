@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ips
-#    username: root
-#    password: 123456
+#    username: ips
+    username: root
+    password: 123456
 #    password:  Xuer@271.HS
-    password: Ips@_123
-    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
-#    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+#    password: Ips@_123
+#    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
 #    url: jdbc:mysql://www.xuerparking.cn:3306/project_lzx?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
 #    url: jdbc:mysql://118.178.179.235:3306/project_lzx?useUnicode=true&useSSL=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
     type: com.alibaba.druid.pool.DruidDataSource
@@ -137,7 +137,7 @@ hikvision:
     
     # 应用密钥（从海康威视开放平台获取）
     app-key: 22668058
-    
+
     # 应用密钥（从海康威视开放平台获取）
     app-secret: T09WZsuZyne1guzhZ4Gc
 
@@ -158,7 +158,7 @@ visitor:
   # 自动开通配置
   auto:
     # 是否启用自动开通功能（true-启用，false-禁用）
-    enabled: true
+    enabled: false
     
     # 智能调度配置（降低服务器负担）
     schedule:
