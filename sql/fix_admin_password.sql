@@ -22,7 +22,7 @@ FROM sys_user
 WHERE username = 'admin';
 
 -- 步骤2：更新为新的BCrypt密码
--- 注意：执行前请先访问 http://localhost:8675/api/test/generate-password?password=123456
+-- 注意：执行前请先访问 http://10.100.111.2:8675/api/test/generate-password?password=123456
 -- 获取新的密码哈希，然后替换下面的密码
 
 -- 临时方案：使用重新生成的密码（密码：123456）
@@ -44,7 +44,7 @@ WHERE username = 'admin';
 -- ========================================
 
 -- 访问测试接口找出正确的密码：
--- http://localhost:8675/api/test/test-db-password
+-- http://10.100.111.2:8675/api/test/test-db-password
 
 -- 这个接口会测试常见密码，找出数据库中密码对应的原始密码
 
@@ -59,7 +59,7 @@ WHERE username = 'admin';
    - 用户名: admin
    - 密码: 123456
 4. 如果仍然失败，访问测试接口获取新密码：
-   http://localhost:8675/api/test/generate-password?password=123456
+   http://10.100.111.2:8675/api/test/generate-password?password=123456
 */
 
 -- ========================================

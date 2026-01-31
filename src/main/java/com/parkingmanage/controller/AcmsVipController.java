@@ -1,9 +1,10 @@
 package com.parkingmanage.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.parkingmanage.common.Result;
 import com.parkingmanage.entity.AcmsEventRecord;
 import com.parkingmanage.entity.VisitorReservationSync;
-import com.parkingmanage.mapper.VisitorReservationSyncMapper;
 import com.parkingmanage.service.AcmsEventRecordService;
 import com.parkingmanage.service.AcmsVipService;
 import com.parkingmanage.service.AcmsVipService.VipOwnerInfo;
@@ -14,11 +15,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +51,14 @@ public class AcmsVipController {
     private AcmsEventRecordService acmsEventRecordService;
 
     @Resource
-    private VisitorReservationSyncMapper visitorReservationSyncMapper;
+    private RestTemplate restTemplate;
+
+    @Resource
+    private ObjectMapper objectMapper;
+
+    // 访客预约查询接口地址
+    @Value("${visitor.reservation.api.url:http://202.118.214.8:8675}")
+    private String visitorReservationApiUrl;
 
     // 🔔 新增：WebSocket处理器
     @Resource
@@ -54,6 +66,12 @@ public class AcmsVipController {
 
     @Resource
     private com.parkingmanage.service.VisitorReservationSyncService visitorReservationSyncService;
+
+    @Resource
+    private com.parkingmanage.mapper.VisitorReservationSyncMapper visitorReservationSyncMapper;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.parkingmanage.service.FocusAlertService focusAlertService;
 
     /**
      * 获取车主信息
@@ -273,24 +291,43 @@ public class AcmsVipController {
                 request.getParkName()
             );
             System.out.println("ticketInfo = " + ticketInfo);
+            
             // 第二步：查询车主详细信息（使用必需参数）
             VipOwnerInfo ownerInfo = acmsVipService.getOwnerInfo(
                 request.getPlateNumber(), 
                 request.getParkName()
             );
             System.out.println("ownerInfo = " + ownerInfo);
+            
+            // 第三步：如果ACMS中没有VIP月票信息，则查询访客预约信息作为补充
+            List<VisitorReservationSync> visitorReservations = null;
+            if (ticketInfo == null) {
+                log.info("📋 [ACMS-融合查询] ACMS中无月票信息，尝试查询访客预约记录 - 车牌号: {}", request.getPlateNumber());
+                visitorReservations = queryVisitorReservationsByHttp(request.getPlateNumber());
+                
+                if (visitorReservations != null && !visitorReservations.isEmpty()) {
+                    log.info("✅ [ACMS-融合查询] 找到访客预约记录 - 车牌号: {}, 数量: {}", 
+                        request.getPlateNumber(), visitorReservations.size());
+                } else {
+                    log.info("📭 [ACMS-融合查询] 未找到访客预约记录 - 车牌号: {}", request.getPlateNumber());
+                }
+            } else {
+                log.info("✅ [ACMS-融合查询] ACMS中已有月票信息，跳过访客预约查询 - 车牌号: {}", request.getPlateNumber());
+            }
+            
             // 构建融合数据
             Map<String, Object> data = new HashMap<>();
             data.put("plateNumber", request.getPlateNumber());
             data.put("parkName", request.getParkName());
             
-            // VIP月票信息
+            // VIP月票信息（优先级最高）
             if (ticketInfo != null) {
                 data.put("vipTypeName", ticketInfo.getVipTypeName());      // 月票名称
                 data.put("ownerName", ticketInfo.getOwnerName());          // 车主姓名（来自VIP票）
                 data.put("ownerPhone", ticketInfo.getOwnerPhone());        // 车主手机号（来自VIP票）
+                data.put("dataSource", "ACMS_VIP");                        // 数据来源标识
             } else {
-                log.warn("📭 [ACMS-融合查询] 未找到VIP票信息");
+                log.warn("📭 [ACMS-融合查询] ACMS中未找到VIP票信息");
             }
             
             // 车主详细信息（根据你的需求映射）
@@ -314,13 +351,38 @@ public class AcmsVipController {
                 log.warn("📭 [ACMS-融合查询] 未找到车主详细信息");
             }
             
+            // 访客预约信息（只有ACMS中无月票信息时才作为补充）
+            if (visitorReservations != null && !visitorReservations.isEmpty()) {
+                // 添加访客预约列表
+                data.put("visitorReservations", visitorReservations);
+                data.put("visitorReservationCount", visitorReservations.size());
+                data.put("hasVisitorReservation", true);
+                
+                // 因为ticketInfo为null才会查询访客预约，所以直接使用第一条预约记录
+                VisitorReservationSync firstReservation = visitorReservations.get(0);
+                data.put("ownerName", firstReservation.getVisitorName());
+                data.put("ownerPhone", firstReservation.getVisitorPhone());
+                data.put("vipTypeName", firstReservation.getVipTypeName());
+                data.put("ownerCategory", "访客");
+                data.put("dataSource", "VISITOR_RESERVATION");  // 数据来源标识
+                log.info("📝 [ACMS-融合查询] 使用访客预约信息（ACMS无月票数据） - 姓名: {}, 电话: {}", 
+                    firstReservation.getVisitorName(), firstReservation.getVisitorPhone());
+            } else if (ticketInfo == null) {
+                // ACMS无月票且没有访客预约
+                data.put("visitorReservations", new ArrayList<>());
+                data.put("visitorReservationCount", 0);
+                data.put("hasVisitorReservation", false);
+            }
+            
             // 判断是否至少有一个数据源
-            if (ticketInfo == null && ownerInfo == null) {
+            if (ticketInfo == null && ownerInfo == null && 
+                (visitorReservations == null || visitorReservations.isEmpty())) {
                 log.info("📭 [ACMS-融合查询] 未找到任何信息 - 车牌号: {}", request.getPlateNumber());
                 return ResponseEntity.ok(Result.error("未找到该车牌的任何信息"));
             }
             
-            log.info("✅ [ACMS-融合查询] 查询成功 - 月票: {}, 车主: {}, 地址: {}, 类别: {}", 
+            log.info("✅ [ACMS-融合查询] 查询成功 - 数据来源: {}, 月票: {}, 车主: {}, 地址: {}, 类别: {}", 
+                data.get("dataSource"),
                 data.get("vipTypeName"),
                 data.get("ownerName"),
                 data.get("ownerAddress"),
@@ -972,20 +1034,61 @@ public class AcmsVipController {
                         log.info("✅ [ACMS-数据推送] 事件记录保存成功 - eventId: {}, eventType: {}, personName: {}", 
                             eventId, eventType, eventRecord.getPersonName());
                         
-                        // 🔔 保存成功后，查询预约记录并推送提醒
-                        if (eventRecord.getPersonName() != null && eventTime != null) {
+                        // 注释：普通广播推送已移除，只保留关注提醒推送
+                        
+                        // 🔔 【新增】检查关注列表并发送关注提醒
+                        if (focusAlertService != null && eventRecord.getIdCard() != null && eventTime != null) {
                             try {
-                                VisitorReservationSync reservation = 
-                                    visitorReservationSyncMapper.selectByVisitorNameAndTimeRange(
+                                // 查询预约信息（如果有）- 放宽时间范围，允许提前或延迟到达
+                                VisitorReservationSync reservation = null;
+                                if (eventRecord.getPersonName() != null) {
+                                    // 先尝试精确匹配（在预约时间范围内）
+                                    reservation = visitorReservationSyncMapper.selectByVisitorNameAndTimeRange(
                                         eventRecord.getPersonName(), eventTime);
-                                
-                                if (reservation != null) {
-                                    log.info("📢 [ACMS-数据推送] 准备推送人员进场提醒 - 姓名: {}, eventId: {}", 
-                                        eventRecord.getPersonName(), eventId);
-                                    sendPersonEntryAlert(reservation, eventRecord, eventObj);
+                                    
+                                    // 如果没找到，尝试根据身份证号查找最近的预约记录
+                                    if (reservation == null && eventRecord.getIdCard() != null) {
+                                        log.info("🔍 [关注追踪] 人员 {} 未在有效期内，尝试按身份证查找最近预约", eventRecord.getPersonName());
+                                        com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<VisitorReservationSync> loosQuery = 
+                                            new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<>();
+                                        loosQuery.eq("visitor_id_card", eventRecord.getIdCard())
+                                                .orderByDesc("create_time")
+                                                .last("LIMIT 1");
+                                        reservation = visitorReservationSyncMapper.selectOne(loosQuery);
+                                        
+                                        if (reservation != null) {
+                                            log.info("✅ [关注追踪] 找到人员 {} 的历史预约记录", eventRecord.getPersonName());
+                                        }
+                                    } else if (reservation != null) {
+                                        log.info("✅ [关注追踪] 人员 {} 在预约有效期内", eventRecord.getPersonName());
+                                    }
                                 }
-                            } catch (Exception e) {
-                                log.warn("⚠️ [ACMS-数据推送] 推送人员进场提醒失败: {}", e.getMessage());
+                                
+                                // 确定事件类型
+                                String eventTypeStr = "进".equals(eventRecord.getDirection()) ? "entry" : "exit";
+                                
+                                // 确保照片URL有前缀
+                                String photoUrl = eventRecord.getPhotoUrl();
+                                if (photoUrl != null && !photoUrl.isEmpty() && !photoUrl.startsWith("http")) {
+                                    photoUrl = "https://10.100.111.5" + (photoUrl.startsWith("/") ? photoUrl : "/" + photoUrl);
+                                    log.info("📷 [关注追踪] 为人员照片添加前缀: {}", photoUrl);
+                                }
+                                
+                                // 调用关注提醒服务
+                                focusAlertService.handlePersonAlert(
+                                    eventRecord.getIdCard(),
+                                    eventRecord.getPersonName(),
+                                    eventTypeStr,
+                                    eventTime,
+                                    eventRecord.getChannelName(),
+                                    eventRecord.getOrganization(),
+                                    eventRecord.getPhoneNo(),
+                                    photoUrl,
+                                    reservation
+                                );
+                            } catch (Exception focusEx) {
+                                log.warn("⚠️ [ACMS-数据推送] 处理人员进出场关注提醒失败: 身份证={}, 错误={}", 
+                                    eventRecord.getIdCard(), focusEx.getMessage());
                             }
                         }
                     } else {
@@ -1127,6 +1230,65 @@ public class AcmsVipController {
         defaultTypes.add(type3);
         
         return defaultTypes;
+    }
+
+    /**
+     * 通过HTTP请求查询访客预约信息
+     * 
+     * @param carNumber 车牌号
+     * @return 访客预约列表
+     */
+    private List<VisitorReservationSync> queryVisitorReservationsByHttp(String carNumber) {
+        try {
+            // URL编码车牌号
+            String encodedCarNumber = URLEncoder.encode(carNumber, StandardCharsets.UTF_8.toString());
+            
+            // 构建请求URL
+            String url = visitorReservationApiUrl + "/parking/visitor-reservation-sync/query-valid-by-car-number?carNumber=" + encodedCarNumber;
+            
+            log.info("🌐 [访客预约HTTP查询] 发送请求 - URL: {}", url);
+            
+            // 发送GET请求
+            String response = restTemplate.getForObject(url, String.class);
+            
+            if (response == null || response.trim().isEmpty()) {
+                log.warn("⚠️ [访客预约HTTP查询] 返回结果为空");
+                return new ArrayList<>();
+            }
+            
+            log.info("📥 [访客预约HTTP查询] 收到响应: {}", response);
+            
+            // 解析JSON响应
+            Map<String, Object> resultMap = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {});
+            
+            // 检查返回码
+            String code = String.valueOf(resultMap.get("code"));
+            if (!"0".equals(code)) {
+                log.warn("⚠️ [访客预约HTTP查询] 接口返回错误码: {}, 消息: {}", code, resultMap.get("msg"));
+                return new ArrayList<>();
+            }
+            
+            // 提取data字段
+            Object dataObj = resultMap.get("data");
+            if (dataObj == null) {
+                log.info("📭 [访客预约HTTP查询] data为空，无访客预约记录");
+                return new ArrayList<>();
+            }
+            
+            // 将data转换为List<VisitorReservationSync>
+            List<VisitorReservationSync> reservations = objectMapper.convertValue(
+                dataObj, 
+                new TypeReference<List<VisitorReservationSync>>() {}
+            );
+            
+            log.info("✅ [访客预约HTTP查询] 成功获取 {} 条访客预约记录", reservations != null ? reservations.size() : 0);
+            
+            return reservations != null ? reservations : new ArrayList<>();
+            
+        } catch (Exception e) {
+            log.error("❌ [访客预约HTTP查询] 查询失败 - 车牌号: {}, 错误: {}", carNumber, e.getMessage(), e);
+            return new ArrayList<>();
+        }
     }
 
     // ==================== 请求参数对象 ====================

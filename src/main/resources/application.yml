@@ -131,6 +131,7 @@ acms:
 
 # 海康威视配置
 hikvision:
+  # 人员查询服务器（现有）
   api:
     # 海康威视开放平台基础URL
     base-url: https://10.100.111.5:443
@@ -143,6 +144,28 @@ hikvision:
 
     # HTTP请求超时时间（毫秒）
     timeout: 30000
+  
+  # 违章查询服务器（新增）
+  traffic:
+    # 海康威视园区卡口服务器URL
+    base-url: https://10.100.110.82:443
+
+    # 合作方Key
+    app-key: 28227294
+
+    # 合作方Secret
+    app-secret: SD5VWH0LUuVHRxAjdAhQ
+
+    # HTTP请求超时时间（毫秒）
+    timeout: 30000
+
+    # 本地服务器基础URL（用于图片代理URL转换）
+    # 线上服务器访问时需要替换成实际的IP或域名
+    # 例如：http://你的公网IP:8675 或 http://你的域名
+    local-base-url: http://202.118.214.8:8675
+
+    # 图片请求超时时间（毫秒）
+    image-timeout: 10000
 
 # 访客VIP自动开通服务配置
 visitor:
@@ -154,6 +177,12 @@ visitor:
     page-size: 1000
     # 接口认证配置
     app-key: F7FE3A3DF4924C2493744E25822BE3AD
+  
+  # 访客预约查询接口配置
+  reservation:
+    api:
+      # 访客预约查询接口地址
+      url: http://202.118.214.8:8675
   
   # 自动开通配置
   auto:

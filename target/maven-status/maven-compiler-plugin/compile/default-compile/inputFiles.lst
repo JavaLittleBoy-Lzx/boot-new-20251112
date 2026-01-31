@@ -4,6 +4,8 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\Activ
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ReportCarOut.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ReportCarIn.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\query\SubAppointQuery.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\HikvisionTrafficViolationController.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\HikvisionTrafficViolationService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\ResourceUtil.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ReportPreCarIn.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\query\CommunityVisitorQuery.java
@@ -15,6 +17,7 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\Activi
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\ActivityLogTestController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\vo\AreaResult.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\vo\AreaSimple.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\FocusWatchService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\VisitorReservationSync.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ExtendInfoIn.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\config\LocalDateTimeFormatConfig.java
@@ -29,6 +32,7 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\WeChat
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\config\AsyncConfig.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\VehicleReservationService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\exception\CustomException.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\HikvisionImageProxyService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\mapper\VisitorReservationSyncMapper.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\BeanConvertUtils.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\PlanResult.java
@@ -55,18 +59,23 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\dto\LoginReq
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\AesUtil.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\JsonUtils.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\ActivityLogController.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\FocusAlertService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\AIKEResultCode.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\AcmsVipService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\MyQuery.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\impl\ReportCarInServiceImpl.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\StatisticsController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\WeChatInfo.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\FocusWatchController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\AcmsEventRecord.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ExportData.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\mapper\FocusWatchListMapper.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\util\PasswordUtil.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\impl\ReportCarOutServiceImpl.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\Result.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\mapper\FocusAlertRecordMapper.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\VehicleReservation.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\FocusWatchList.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\config\WebConfig.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\vo\ScrapMaintenceDto.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\SysUser.java
@@ -109,6 +118,7 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\config\WebSo
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\VisitorPlanDashboardController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\query\DecrypQuery.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\handle\EncryptHandler.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\VisitorReservationSyncController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\AIKER.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\UserManagementController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\ParkingManageApplication.java
@@ -122,6 +132,7 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\impl
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\common\IMoocJSONResult.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ReportCarInData.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\exception\BusinessException.java
+D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\FocusAlertRecord.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\PaymentRecord.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\query\VehicleQuery.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\PaymentRecordService.java
@@ -135,7 +146,6 @@ D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\util\AcmsDat
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ViolationVehicleRecord.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\SpringUtil.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\utils\JsonUtils.java
-D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\controller\HikvisionProxyController.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\entity\ReportCarOutData.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\service\VisitorVipAutoService.java
 D:\nefu-edu-datav\boot-new-20251112\src\main\java\com\parkingmanage\mapper\PaymentRecordMapper.java

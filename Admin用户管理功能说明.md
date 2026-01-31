@@ -48,7 +48,7 @@
 
 ### 基础路径
 ```
-http://localhost:8675/api/users
+http://10.100.111.2:8675/api/users
 ```
 
 ### 接口列表
@@ -325,11 +325,11 @@ public class SysUser {
 
 ```bash
 # 获取用户列表
-curl -X GET "http://localhost:8675/api/users/list" \
+curl -X GET "http://10.100.111.2:8675/api/users/list" \
   -H "Authorization: Bearer YOUR_TOKEN"
 
 # 创建用户
-curl -X POST "http://localhost:8675/api/users/create" \
+curl -X POST "http://10.100.111.2:8675/api/users/create" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -340,7 +340,7 @@ curl -X POST "http://localhost:8675/api/users/create" \
   }'
 
 # 重置密码
-curl -X POST "http://localhost:8675/api/users/reset-password" \
+curl -X POST "http://10.100.111.2:8675/api/users/reset-password" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{

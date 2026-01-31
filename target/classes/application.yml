@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: ips
-    username: root
-    password: 123456
+    username: ips
+#    username: root
+#    password: 123456
 #    password:  Xuer@271.HS
-#    password: Ips@_123
-#    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
-    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+    password: Ips@_123
+    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+#    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
 #    url: jdbc:mysql://www.xuerparking.cn:3306/project_lzx?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
 #    url: jdbc:mysql://118.178.179.235:3306/project_lzx?useUnicode=true&useSSL=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
     type: com.alibaba.druid.pool.DruidDataSource
@@ -131,6 +131,7 @@ acms:
 
 # 海康威视配置
 hikvision:
+  # 人员查询服务器（现有）
   api:
     # 海康威视开放平台基础URL
     base-url: https://10.100.111.5:443
@@ -143,6 +144,28 @@ hikvision:
 
     # HTTP请求超时时间（毫秒）
     timeout: 30000
+  
+  # 违章查询服务器（新增）
+  traffic:
+    # 海康威视园区卡口服务器URL
+    base-url: https://10.100.110.82:443
+
+    # 合作方Key
+    app-key: 28227294
+
+    # 合作方Secret
+    app-secret: SD5VWH0LUuVHRxAjdAhQ
+
+    # HTTP请求超时时间（毫秒）
+    timeout: 30000
+
+    # 本地服务器基础URL（用于图片代理URL转换）
+    # 线上服务器访问时需要替换成实际的IP或域名
+    # 例如：http://你的公网IP:8675 或 http://你的域名
+    local-base-url: http://202.118.214.8:8675
+
+    # 图片请求超时时间（毫秒）
+    image-timeout: 10000
 
 # 访客VIP自动开通服务配置
 visitor:
@@ -155,10 +178,16 @@ visitor:
     # 接口认证配置
     app-key: F7FE3A3DF4924C2493744E25822BE3AD
   
+  # 访客预约查询接口配置
+  reservation:
+    api:
+      # 访客预约查询接口地址
+      url: http://202.118.214.8:8675
+  
   # 自动开通配置
   auto:
     # 是否启用自动开通功能（true-启用，false-禁用）
-    enabled: false
+    enabled: true
     
     # 智能调度配置（降低服务器负担）
     schedule:

@@ -84,6 +84,9 @@ public class VehicleReservationController {
     @Autowired
     private com.parkingmanage.service.VisitorReservationSyncService visitorReservationSyncService;
 
+    @Autowired(required = false)
+    private com.parkingmanage.service.FocusAlertService focusAlertService;
+
     @Setter
     @Getter
     private String enterPreVipType = "";
@@ -514,40 +517,65 @@ public class VehicleReservationController {
                         // 检查是否需要调用接口添加访客
                         checkAndAddVisitorIfNeeded(plateNumber, bizContent.getString("enter_channel_name"), enterTime);
                         
-                        // 🔔 更新预约记录并推送提醒
+                        // 🔔 更新预约记录状态
                         if (visitorReservationSyncService != null && enterTime != null) {
-                            // 先调用原有的处理方法
                             try {
                                 visitorReservationSyncService.handleCarIn(plateNumber, enterTime);
                             } catch (Exception ex) {
                                 logger.warn("⚠️ 更新预约记录的车辆进场状态失败: 车牌={}, 错误={}", plateNumber, ex.getMessage());
                             }
-                            
-                            // 然后查询是否匹配到预约记录并推送提醒
+                        }
+                        
+                        // 🔔 【新增】检查关注列表并发送关注提醒
+                        if (focusAlertService != null && enterTime != null) {
                             try {
-                                // 根据车牌号和当前时间查询预约记录
+                                // 查询预约信息（如果有）- 放宽时间范围，允许提前或延迟到达
                                 java.util.Date currentTime = new java.util.Date(System.currentTimeMillis());
                                 
-                                // 使用查询包装器根据车牌号查询预约记录
+                                // 先尝试精确匹配（在预约时间范围内）
                                 QueryWrapper<VisitorReservationSync> queryWrapper = new QueryWrapper<>();
-                                queryWrapper.eq("car_number", plateNumber)  // 车牌号匹配
-                                          .le("start_time", currentTime)      // 预约开始时间 <= 当前时间
-                                          .ge("end_time", currentTime)        // 预约结束时间 >= 当前时间
-                                          // deleted=0 会由 @TableLogic 自动处理，无需手动添加
-                                          .orderByDesc("create_time")          // 按创建时间倒序
-                                          .last("LIMIT 1");                    // 只取最新一条
-                                
+                                queryWrapper.eq("car_number", plateNumber)
+                                          .le("start_time", currentTime)
+                                          .ge("end_time", currentTime)
+                                          .orderByDesc("create_time")
+                                          .last("LIMIT 1");
                                 VisitorReservationSync reservation = visitorReservationSyncMapper.selectOne(queryWrapper);
                                 
-                                // 推送WebSocket提醒（如果有匹配的预约）
-                                if (reservation != null) {
-                                    logger.info("📢 [车辆进场] 准备推送车辆进场提醒 - 车牌={}, 预约人={}", plateNumber, reservation.getVisitorName());
-                                    sendVehicleEntryAlert(reservation, bizContent);
+                                // 如果没找到，尝试宽松匹配（查找最近的预约记录）
+                                if (reservation == null) {
+                                    logger.info("🔍 [关注追踪] 车牌 {} 未在有效期内，尝试查找最近预约记录", plateNumber);
+                                    QueryWrapper<VisitorReservationSync> loosQuery = new QueryWrapper<>();
+                                    loosQuery.eq("car_number", plateNumber)
+                                            .orderByDesc("create_time")
+                                            .last("LIMIT 1");
+                                    reservation = visitorReservationSyncMapper.selectOne(loosQuery);
+                                    
+                                    if (reservation != null) {
+                                        logger.info("✅ [关注追踪] 找到车牌 {} 的历史预约记录: 访客={}", 
+                                            plateNumber, reservation.getVisitorName());
+                                    }
                                 } else {
-                                    logger.debug("ℹ️ 未找到车牌 {} 的有效预约记录", plateNumber);
+                                    logger.info("✅ [关注追踪] 车牌 {} 在预约有效期内: 访客={}", 
+                                        plateNumber, reservation.getVisitorName());
                                 }
-                            } catch (Exception queryEx) {
-                                logger.warn("⚠️ 推送车辆进场提醒失败: 车牌={}, 错误={}", plateNumber, queryEx.getMessage());
+                                
+                                // 解析进场时间
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                java.util.Date enterDateTime = sdf.parse(enterTime);
+                                
+                                // 添加图片URL前缀
+                                String photoUrl = addImageUrlPrefix(bizContent.getString("enter_car_full_picture"));
+                                System.out.println("photoUrl = " + photoUrl);
+                                // 调用关注提醒服务
+                                focusAlertService.handleVehicleEntryAlert(
+                                    plateNumber, 
+                                    enterDateTime,
+                                    bizContent.getString("enter_channel_name"),
+                                    photoUrl,
+                                    reservation
+                                );
+                            } catch (Exception focusEx) {
+                                logger.warn("⚠️ 处理车辆进场关注提醒失败: 车牌={}, 错误={}", plateNumber, focusEx.getMessage());
                             }
                         }
                     }
@@ -1411,12 +1439,48 @@ public class VehicleReservationController {
                     try {
                         saveCarOutData(bizContent);
                         logger.info("✅ 成功写入离场数据到数据库: 车牌={}", plateNumber);
+                        
+                        // 获取时间信息
+                        String enterTime = bizContent.getString("enter_time");
+                        String leaveTime = bizContent.getString("leave_time");
+                        
                         // 更新预约记录的车辆进出场状态
-                        if (visitorReservationSyncService != null) {
-                            String enterTime = bizContent.getString("enter_time");
-                            String leaveTime = bizContent.getString("leave_time");
-                            if (leaveTime != null) {
-                                visitorReservationSyncService.handleCarOut(plateNumber, enterTime, leaveTime);
+                        if (visitorReservationSyncService != null && leaveTime != null) {
+                            visitorReservationSyncService.handleCarOut(plateNumber, enterTime, leaveTime);
+                        }
+                        
+                        // 🔔 【新增】检查关注列表并发送关注提醒
+                        if (focusAlertService != null && leaveTime != null) {
+                            try {
+                                // 查询预约信息（如果有）
+                                java.util.Date currentTime = new java.util.Date(System.currentTimeMillis());
+                                QueryWrapper<VisitorReservationSync> queryWrapper = new QueryWrapper<>();
+                                queryWrapper.eq("car_number", plateNumber)
+                                          .le("start_time", currentTime)
+                                          .ge("end_time", currentTime)
+                                          .orderByDesc("create_time")
+                                          .last("LIMIT 1");
+                                VisitorReservationSync reservation = visitorReservationSyncMapper.selectOne(queryWrapper);
+                                
+                                // 解析离场时间
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                java.util.Date leaveDateTime = sdf.parse(leaveTime);
+                                
+                                // 处理照片URL前缀
+                                String leavePhotoUrl = addImageUrlPrefix(bizContent.getString("leave_car_full_picture"));
+                                
+                                // 调用关注提醒服务
+                                focusAlertService.handleVehicleExitAlert(
+                                    plateNumber,
+                                    leaveDateTime,
+                                    bizContent.getString("leave_channel_name"),
+                                    bizContent.getString("enter_channel_name"),
+                                    bizContent.getString("stopping_time"),
+                                    leavePhotoUrl,
+                                    reservation
+                                );
+                            } catch (Exception focusEx) {
+                                logger.warn("⚠️ 处理车辆出场关注提醒失败: 车牌={}, 错误={}", plateNumber, focusEx.getMessage());
                             }
                         }
                     } catch (Exception e) {
