@@ -72,6 +72,15 @@ public interface UserService {
     boolean changePassword(Long userId, String oldPassword, String newPassword);
 
     /**
+     * 验证密码
+     * 
+     * @param userId 用户ID
+     * @param password 密码
+     * @return 是否正确
+     */
+    boolean verifyPassword(Long userId, String password);
+
+    /**
      * 重置密码
      * 
      * @param userId 用户ID

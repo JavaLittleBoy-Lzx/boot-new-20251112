@@ -59,21 +59,16 @@ public class StatisticsController {
         
         try {
             log.info("📊 [车辆进场统计] 开始查询: {} - {}", startDate, endDate);
-            
             LocalDateTime start = LocalDateTime.parse(startDate, DATE_TIME_FORMATTER);
             LocalDateTime end = LocalDateTime.parse(endDate, DATE_TIME_FORMATTER);
-            
             // 统计创建时间在时间范围内的记录数
             QueryWrapper<com.parkingmanage.entity.ReportCarIn> wrapper = new QueryWrapper<>();
             wrapper.between("create_time", start, end);
-            
             Integer count = reportCarInMapper.selectCount(wrapper);
-            
-            log.info("✅ [车辆进场统计] 查询完成: {} 辆", count);
+//            log.info("✅ [车辆进场统计] 查询完成: {} 辆", count);
             return Result.success(count);
-            
         } catch (Exception e) {
-            log.error("❌ [车辆进场统计] 查询失败", e);
+//            log.error("❌ [车辆进场统计] 查询失败", e);
             return Result.error("查询失败: " + e.getMessage());
         }
     }
@@ -88,19 +83,15 @@ public class StatisticsController {
             @RequestParam String startDate,
             @ApiParam(value = "结束时间", required = true, example = "2024-01-01 23:59:59")
             @RequestParam String endDate) {
-        
         try {
-            log.info("📊 [车辆出场统计] 开始查询: {} - {}", startDate, endDate);
-            
+//            log.info("📊 [车辆出场统计] 开始查询: {} - {}", startDate, endDate);
             LocalDateTime start = LocalDateTime.parse(startDate, DATE_TIME_FORMATTER);
             LocalDateTime end = LocalDateTime.parse(endDate, DATE_TIME_FORMATTER);
-            
-            // 统计创建时间在时间范围内的记录数
             QueryWrapper<com.parkingmanage.entity.ReportCarOut> wrapper = new QueryWrapper<>();
             wrapper.between("create_time", start, end);
-            
+            // 统计创建时间在时间范围内的记录数
             Integer count = reportCarOutMapper.selectCount(wrapper);
-            
+            // 返回结果
             log.info("✅ [车辆出场统计] 查询完成: {} 辆", count);
             return Result.success(count);
             
@@ -120,10 +111,8 @@ public class StatisticsController {
             @RequestParam String startDate,
             @ApiParam(value = "结束时间", required = true, example = "2024-01-01 23:59:59")
             @RequestParam String endDate) {
-        
         try {
-            log.info("📊 [人脸进场统计] 开始查询: {} - {}", startDate, endDate);
-            
+//            log.info("📊 [人脸进场统计] 开始查询: {} - {}", startDate, endDate);
             LocalDateTime start = LocalDateTime.parse(startDate, DATE_TIME_FORMATTER);
             LocalDateTime end = LocalDateTime.parse(endDate, DATE_TIME_FORMATTER);
             
@@ -131,10 +120,8 @@ public class StatisticsController {
             QueryWrapper<AcmsEventRecord> wrapper = new QueryWrapper<>();
             wrapper.between("event_time", start, end)
                    .eq("direction", "进");
-            
             Integer count = acmsEventRecordMapper.selectCount(wrapper);
-            
-            log.info("✅ [人脸进场统计] 查询完成: {} 人次", count);
+//            log.info("✅ [人脸进场统计] 查询完成: {} 人次", count);
             return Result.success(count);
             
         } catch (Exception e) {

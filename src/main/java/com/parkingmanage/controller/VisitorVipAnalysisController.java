@@ -49,7 +49,7 @@ public class VisitorVipAnalysisController {
     @PostMapping("/statistics")
     @ApiOperation(value = "获取访客与VIP车辆进出统计数据", notes = "根据时间范围和停车场获取统计数据")
     public ResponseEntity<Result<Map<String, Object>>> getVisitorVipStatistics(@RequestBody StatisticsRequest request) {
-        log.info("📊 [访客VIP统计] 开始查询 - 车场: {}, 时间范围: {}", request.getParkName(), request.getTimeRange());
+//        log.info("📊 [访客VIP统计] 开始查询 - 车场: {}, 时间范围: {}", request.getParkName(), request.getTimeRange());
         
         try {
             // 参数校验
@@ -71,7 +71,7 @@ public class VisitorVipAnalysisController {
                 request.getEndTime()
             );
             
-            log.info("✅ [访客VIP统计] 查询成功 - 车场: {}", request.getParkName());
+//            log.info("✅ [访客VIP统计] 查询成功 - 车场: {}", request.getParkName());
             
             return ResponseEntity.ok(Result.success(statistics));
             

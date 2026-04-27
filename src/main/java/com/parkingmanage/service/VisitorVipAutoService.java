@@ -548,6 +548,7 @@ public class VisitorVipAutoService {
      */
     private List<VisitorReservation> parseVisitorReservations(String response) {
         log.info("🔍 [开始解析] parseVisitorReservations 方法被调用");
+        log.info("🔍 [响应内容] {}", response);
         
         if (!StringUtils.hasText(response)) {
             log.warn("⚠️ [解析失败] 响应内容为空或null");

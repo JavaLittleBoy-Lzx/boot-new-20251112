@@ -63,7 +63,7 @@ public class FaceMonitorController {
             
             List<AcmsEventRecord> records = acmsEventRecordMapper.selectList(queryWrapper);
             
-            log.info("✅ [人脸热力图] 查询到 {} 条记录", records.size());
+//            log.info("✅ [人脸热力图] 查询到 {} 条记录", records.size());
             
             // 提取所有唯一的通道名称作为位置区域
             Set<String> locationSet = records.stream()
@@ -396,7 +396,7 @@ public class FaceMonitorController {
             @RequestParam(defaultValue = "50") Integer limit) {
         
         try {
-            log.info("📡 [人脸监控] 获取实时数据，限制: {} 条", limit);
+//            log.info("📡 [人脸监控] 获取实时数据，限制: {} 条", limit);
             
             // 查询最新的人脸识别记录（排除"默认组织"）
             QueryWrapper<AcmsEventRecord> queryWrapper = new QueryWrapper<>();
@@ -463,7 +463,7 @@ public class FaceMonitorController {
             result.put("records", dataList);
             result.put("total", dataList.size());
             
-            log.info("✅ [人脸监控] 返回 {} 条实时数据", dataList.size());
+//            log.info("✅ [人脸监控] 返回 {} 条实时数据", dataList.size());
             
             return Result.success(result);
             

@@ -181,6 +181,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean verifyPassword(Long userId, String password) {
+        log.info("验证密码: userId={}", userId);
+        
+        SysUser user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        // 验证密码
+        return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean resetPassword(Long userId, String newPassword) {
         log.info("重置密码: userId={}", userId);

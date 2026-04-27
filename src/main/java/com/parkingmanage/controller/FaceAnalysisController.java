@@ -47,13 +47,13 @@ public class FaceAnalysisController {
     @PostMapping("/channel-statistics")
     @ApiOperation(value = "获取通道人流统计数据", notes = "根据时间范围获取各通道的人流统计数据")
     public ResponseEntity<Result<Map<String, Object>>> getChannelStatistics(@RequestBody ChannelStatisticsRequest request) {
-        log.info("📊 [通道人流统计] 开始查询 - 时间范围: {}", request.getTimeRange());
+//        log.info("📊 [通道人流统计] 开始查询 - 时间范围: {}", request.getTimeRange());
         
         try {
             // 参数校验
             if (!StringUtils.hasText(request.getTimeRange())) {
                 log.warn("⚠️ [通道人流统计] 时间范围不能为空");
-                return ResponseEntity.ok(Result.error("时间范围不能为空"));
+//                return ResponseEntity.ok(Result.error("时间范围不能为空"));
             }
             
             // 获取统计数据
@@ -63,7 +63,7 @@ public class FaceAnalysisController {
                 request.getEndTime()
             );
             
-            log.info("✅ [通道人流统计] 查询成功");
+//            log.info("✅ [通道人流统计] 查询成功");
             
             return ResponseEntity.ok(Result.success(statistics));
             
@@ -166,7 +166,7 @@ public class FaceAnalysisController {
             String actualStartTime = (startTime != null) ? startTime : timeInfo.getStartTime();
             String actualEndTime = (endTime != null) ? endTime : timeInfo.getEndTime();
             
-            log.info("📅 [时间范围] 实际使用: startTime={}, endTime={}", actualStartTime, actualEndTime);
+//            log.info("📅 [时间范围] 实际使用: startTime={}, endTime={}", actualStartTime, actualEndTime);
             
             // 从数据库获取人脸识别数据
             QueryWrapper<AcmsEventRecord> queryWrapper = new QueryWrapper<>();
@@ -177,11 +177,11 @@ public class FaceAnalysisController {
             List<AcmsEventRecord> eventRecords = acmsEventRecordMapper.selectList(queryWrapper);
             
             if (eventRecords == null || eventRecords.isEmpty()) {
-                log.info("📭 [通道人流统计] 数据库数据为空");
+//                log.info("📭 [通道人流统计] 数据库数据为空");
                 return getMockChannelStatistics();
             }
             
-            log.info("✅ [数据库查询] 人脸识别数据: {} 条", eventRecords.size());
+//            log.info("✅ [数据库查询] 人脸识别数据: {} 条", eventRecords.size());
             
             // 按通道分组统计
             Map<String, ChannelStats> channelStatsMap = new HashMap<>();

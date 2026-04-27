@@ -1343,12 +1343,12 @@ public class VehicleReservationController {
         }
 
         // 如果URL已经包含前缀，直接返回
-        if (imageUrl.startsWith("http://10.100.111.2:8092")) {
+        if (imageUrl.startsWith("http://10.120.11.1:8092")) {
             return imageUrl;
         }
 
         // 添加前缀
-        return "http://10.100.111.2:8092" + imageUrl;
+        return "http://10.120.11.1:8092" + imageUrl;
     }
 
     /**
@@ -2328,7 +2328,7 @@ public class VehicleReservationController {
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 // 如果不是http开头，添加前缀（imageUrl本身已包含/vems路径）
                 if (!imageUrl.startsWith("http")) {
-                    imageUrl = "http://10.100.111.2:8092" + 
+                    imageUrl = "http://10.120.11.1:8092" +
                               (imageUrl.startsWith("/") ? imageUrl : "/" + imageUrl);
                 }
                 alert.put("imageUrl", imageUrl);

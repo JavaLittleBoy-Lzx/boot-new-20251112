@@ -1,13 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ips
-#    username: root
-#    password: 123456
+#    username: ips
+    username: root
+    password: 123456
 #    password:  Xuer@271.HS
-    password: Ips@_123
-    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
-#    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+#    password: Ips@_123
+#    url: jdbc:mysql://localhost:3306/nefu_system?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
+    url: jdbc:mysql://localhost:3306/parking_management?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true
 #    url: jdbc:mysql://www.xuerparking.cn:3306/project_lzx?useUnicode=true&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
 #    url: jdbc:mysql://118.178.179.235:3306/project_lzx?useUnicode=true&useSSL=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&allowMultiQueries=true&autoReconnect=true
     type: com.alibaba.druid.pool.DruidDataSource
@@ -78,7 +78,9 @@ wechat:
   # 微信公众号配置（新增API接口配置）
   public:
     appid: wx7fcbbc5d885b630b  # 公众号AppID，用于API接口调用
-    secret: 19b9f00b48f266875b1b7e55eda6dd17  # 公众号AppSecret，用于获取access_token
+    secret:
+
+  # 公众号AppSecret，用于获取access_token、获取用户信息
   # 微信网页授权配置
   oauth:
     appid: wx7fcbbc5d885b630b  # 公众号AppID（与public.appid相同）
@@ -120,7 +122,7 @@ logging:
 acms:
   api:
     # ACMS接口地址（请替换为实际地址）
-    url: http://10.100.111.2:8092/vems
+    url: http://10.120.11.1:8092/vems
 #    url: http://cl.nefu.edu.cn:8092/vems
     # 设备ID（请替换为实际值）
     device_id: 7427EA1D1AE17427EA1D1AE17427EA1D
@@ -134,7 +136,7 @@ hikvision:
   # 人员查询服务器（现有）
   api:
     # 海康威视开放平台基础URL
-    base-url: https://10.100.111.5:443
+    base-url: https://10.120.11.4:443
     
     # 应用密钥（从海康威视开放平台获取）
     app-key: 22668058
@@ -162,8 +164,7 @@ hikvision:
     # 本地服务器基础URL（用于图片代理URL转换）
     # 线上服务器访问时需要替换成实际的IP或域名
     # 例如：http://你的公网IP:8675 或 http://你的域名
-    local-base-url: http://202.118.214.8:8675
-
+    local-base-url: http://202.118.219.92:8675
     # 图片请求超时时间（毫秒）
     image-timeout: 10000
 
@@ -172,7 +173,7 @@ visitor:
   # 外部接口配置
   api:
     # 外部接口地址（需要替换为实际地址）
-    url: http://10.100.111.3:8888
+    url: http://10.120.11.2:8888
 #    url: http://www.xuerparking.cn:8543
     page-size: 1000
     # 接口认证配置
@@ -182,12 +183,12 @@ visitor:
   reservation:
     api:
       # 访客预约查询接口地址
-      url: http://202.118.214.8:8675
+      url: http://202.118.219.92:8675
   
   # 自动开通配置
   auto:
     # 是否启用自动开通功能（true-启用，false-禁用）
-    enabled: true
+    enabled: false
     
     # 智能调度配置（降低服务器负担）
     schedule:

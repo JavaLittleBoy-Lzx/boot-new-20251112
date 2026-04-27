@@ -54,7 +54,7 @@ public class VehicleFlowAnalysisController {
     @PostMapping("/statistics")
     @ApiOperation(value = "获取进出口车辆统计数据", notes = "根据时间范围和停车场获取车辆进出统计数据")
     public ResponseEntity<Result<Map<String, Object>>> getVehicleFlowStatistics(@RequestBody VehicleFlowStatisticsRequest request) {
-        log.info("📊 [进出口车辆统计] 开始查询 - 车场: {}, 时间范围: {}", request.getParkName(), request.getTimeRange());
+//        log.info("📊 [进出口车辆统计] 开始查询 - 车场: {}, 时间范围: {}", request.getParkName(), request.getTimeRange());
         
         try {
             // 参数校验
@@ -211,11 +211,11 @@ public class VehicleFlowAnalysisController {
             String actualStartTime = (startTime != null) ? startTime : timeInfo.getStartTime();
             String actualEndTime = (endTime != null) ? endTime : timeInfo.getEndTime();
             
-            log.info("📅 [时间范围] 原始参数: startTime={}, endTime={}", startTime, endTime);
-            log.info("📅 [时间范围] 实际使用: startTime={}, endTime={}", actualStartTime, actualEndTime);
+//            log.info("📅 [时间范围] 原始参数: startTime={}, endTime={}", startTime, endTime);
+//            log.info("📅 [时间范围] 实际使用: startTime={}, endTime={}", actualStartTime, actualEndTime);
             
             // 从本地数据库获取进场车辆数据
-            log.info("📤 [数据库查询] 获取进场车辆数据 - 车场: {}, 时间范围: {} ~ {}", parkName, actualStartTime, actualEndTime);
+//            log.info("📤 [数据库查询] 获取进场车辆数据 - 车场: {}, 时间范围: {} ~ {}", parkName, actualStartTime, actualEndTime);
             QueryWrapper<ReportCarIn> inQueryWrapper = new QueryWrapper<>();
             inQueryWrapper.ge("enter_time", actualStartTime)
                          .le("enter_time", actualEndTime)
@@ -224,7 +224,7 @@ public class VehicleFlowAnalysisController {
             List<ReportCarIn> carInList = reportCarInMapper.selectList(inQueryWrapper);
             
             // 从本地数据库获取离场车辆数据
-            log.info("📤 [数据库查询] 获取离场车辆数据 - 车场: {}, 时间范围: {} ~ {}", parkName, actualStartTime, actualEndTime);
+//            log.info("📤 [数据库查询] 获取离场车辆数据 - 车场: {}, 时间范围: {} ~ {}", parkName, actualStartTime, actualEndTime);
             QueryWrapper<ReportCarOut> outQueryWrapper = new QueryWrapper<>();
             outQueryWrapper.ge("leave_time", actualStartTime)
                           .le("leave_time", actualEndTime)
@@ -235,7 +235,7 @@ public class VehicleFlowAnalysisController {
             // 如果数据库数据为空，返回模拟数据
             if ((carInList == null || carInList.isEmpty()) && 
                 (carOutList == null || carOutList.isEmpty())) {
-                log.info("📭 [进出口车辆统计] 数据库数据为空，返回模拟数据");
+//                log.info("📭 [进出口车辆统计] 数据库数据为空，返回模拟数据");
                 return getMockStatistics(timeRange);
             }
             
@@ -243,7 +243,7 @@ public class VehicleFlowAnalysisController {
             List<ReportCarIn> entryCars = carInList != null ? carInList : new ArrayList<>();
             List<ReportCarOut> exitCars = carOutList != null ? carOutList : new ArrayList<>();
             
-            log.info("✅ [数据库查询] 进场数据: {} 条, 离场数据: {} 条", entryCars.size(), exitCars.size());
+//            log.info("✅ [数据库查询] 进场数据: {} 条, 离场数据: {} 条", entryCars.size(), exitCars.size());
             
             // 按时间分组统计（分别统计进场和离场）
             Map<String, HourlyStats> hourlyStats = groupByHourSeparatedFromDB(entryCars, exitCars, timeInfo);
@@ -1521,11 +1521,11 @@ public class VehicleFlowAnalysisController {
             result.put("timeRange", request.getTimeRange());
             result.put("dataSource", "PAYMENT_RECORD");
             
-            log.info("✅ [收费分析] 查询成功 - 总收入: ¥{}, 已付费: {}, 免费: {}", 
-                     String.format("%.2f", totalRevenue), paidCount, freeCount);
-            log.info("📦 [收费分析] 返回数据结构: paymentStats={}, revenueByDuration={}, summary={}", 
-                     paymentStats.size(), revenueByDurationList.size(), summary);
-            
+//            log.info("✅ [收费分析] 查询成功 - 总收入: ¥{}, 已付费: {}, 免费: {}",
+//                     String.format("%.2f", totalRevenue), paidCount, freeCount);
+//            log.info("📦 [收费分析] 返回数据结构: paymentStats={}, revenueByDuration={}, summary={}",
+//                     paymentStats.size(), revenueByDurationList.size(), summary);
+//
             return ResponseEntity.ok(Result.success(result));
             
         } catch (Exception e) {
@@ -1746,9 +1746,9 @@ public class VehicleFlowAnalysisController {
             );
             result.put("durationLabels", durationLabels);
             
-            log.info("✅ [车辆热力图] 查询成功 - 总记录: {}, 有效记录: {}, 过滤(>24h): {}", 
-                     carOutRecords.size(), carOutRecords.size() - filteredCount, filteredCount);
-            
+//            log.info("✅ [车辆热力图] 查询成功 - 总记录: {}, 有效记录: {}, 过滤(>24h): {}",
+//                     carOutRecords.size(), carOutRecords.size() - filteredCount, filteredCount);
+//
             return ResponseEntity.ok(Result.success(result));
             
         } catch (Exception e) {

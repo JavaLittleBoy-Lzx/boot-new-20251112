@@ -43,14 +43,14 @@ public class VisitorPlanDashboardController {
     @ApiOperation("获取计划看板统计数据")
     public Result<?> getStatistics(@RequestParam(defaultValue = "today") String timeRange) {
         try {
-            log.info("📊 [计划看板] 开始统计，时间范围: {}", timeRange);
+//            log.info("📊 [计划看板] 开始统计，时间范围: {}", timeRange);
 
             // 根据时间范围计算开始和结束时间
             Date[] timeRangeDates = getTimeRangeDates(timeRange);
             Date startDate = timeRangeDates[0];
             Date endDate = timeRangeDates[1];
             
-            log.info("📊 [计划看板] 查询范围: {} 到 {}", startDate, endDate);
+//            log.info("📊 [计划看板] 查询范围: {} 到 {}", startDate, endDate);
             
             // 查询指定时间范围内的所有预约记录
             QueryWrapper<VisitorReservationSync> queryWrapper = new QueryWrapper<>();
@@ -60,7 +60,7 @@ public class VisitorPlanDashboardController {
             
             List<VisitorReservationSync> currentReservations = visitorReservationSyncMapper.selectList(queryWrapper);
             
-            log.info("✅ [计划看板] 查询到 {} 条{}预约", currentReservations.size(), getTimeRangeLabel(timeRange));
+//            log.info("✅ [计划看板] 查询到 {} 条{}预约", currentReservations.size(), getTimeRangeLabel(timeRange));
             
             // 统计数据
             Map<String, Object> result = new HashMap<>();
@@ -122,8 +122,8 @@ public class VisitorPlanDashboardController {
             result.put("dataSource", "DATABASE");
             result.put("updateTime", new Date());
             
-            log.info("📊 [计划看板] {}访客: {}/{}, 车辆: {}/{}", 
-                getTimeRangeLabel(timeRange), arrivedVisitors, plannedVisitors, arrivedVehicles, expectedVehicles);
+//            log.info("📊 [计划看板] {}访客: {}/{}, 车辆: {}/{}",
+//                getTimeRangeLabel(timeRange), arrivedVisitors, plannedVisitors, arrivedVehicles, expectedVehicles);
             
             return Result.success(result);
             

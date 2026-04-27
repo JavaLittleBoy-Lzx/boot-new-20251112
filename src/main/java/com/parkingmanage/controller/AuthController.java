@@ -4,6 +4,7 @@ import com.parkingmanage.common.Result;
 import com.parkingmanage.dto.LoginRequest;
 import com.parkingmanage.dto.LoginResponse;
 import com.parkingmanage.service.UserService;
+import com.parkingmanage.utils.JwtUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,7 +21,7 @@ import java.util.Map;
 /**
  * 认证控制器
  * 处理登录、登出、Token刷新等认证相关操作
- * 
+ *
  * @author parking-system
  * @since 2024-12-06
  */
@@ -33,6 +34,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
      * 用户登录
@@ -195,6 +199,53 @@ public class AuthController {
     }
 
     /**
+     * 验证旧密码
+     * 
+     * @param passwordData 密码数据
+     * @param request HTTP请求
+     * @return 验证结果
+     */
+    @PostMapping("/verify-old-password")
+    @ApiOperation(value = "验证旧密码", notes = "验证当前登录用户的旧密码是否正确")
+    public Result<Boolean> verifyOldPassword(
+            @RequestBody @ApiParam(value = "密码数据", required = true) Map<String, String> passwordData,
+            HttpServletRequest request) {
+        
+        try {
+            String token = getTokenFromRequest(request);
+            
+            if (token == null || !userService.validateToken(token)) {
+                return Result.error("401", "未授权访问");
+            }
+            
+            String oldPassword = passwordData.get("oldPassword");
+            
+            if (oldPassword == null || oldPassword.isEmpty()) {
+                return Result.error("旧密码不能为空");
+            }
+
+            // 从Token中获取userId
+            Integer userId = jwtUtil.getUserIdFromToken(token);
+            if (userId == null) {
+                return Result.error("无效的Token");
+            }
+
+            // 验证旧密码
+            boolean isValid = userService.verifyPassword(Long.valueOf(userId), oldPassword);
+            
+            if (!isValid) {
+                return Result.error("401", "旧密码错误");
+            }
+
+            return Result.success(true);
+            
+        } catch (Exception e) {
+            log.error("验证旧密码失败: {}", e.getMessage());
+            return Result.error("500", "服务器错误，请稍后重试");
+        }
+    }
+
+    /**
      * 修改密码
      * 
      * @param passwordData 密码数据
@@ -225,17 +276,34 @@ public class AuthController {
             if (newPassword.length() < 6) {
                 return Result.error("新密码长度不能少于6位");
             }
-            
-            // 这里需要从Token中获取userId
-            // Long userId = jwtUtil.getUserIdFromToken(token);
-            // userService.changePassword(userId, oldPassword, newPassword);
-            
-            log.info("密码修改成功");
+
+            // 从Token中获取userId
+            Integer userId = jwtUtil.getUserIdFromToken(token);
+            if (userId == null) {
+                return Result.error("无效的Token");
+            }
+
+            // 调用Service修改密码
+            boolean success = userService.changePassword(Long.valueOf(userId), oldPassword, newPassword);
+            if (!success) {
+                return Result.error("密码修改失败");
+            }
+
+            log.info("密码修改成功: userId={}", userId);
             return Result.success("密码修改成功");
             
+        } catch (RuntimeException e) {
+            log.error("密码修改失败: {}", e.getMessage());
+            // 根据错误信息返回不同的错误码
+            if (e.getMessage().contains("原密码错误") || e.getMessage().contains("旧密码错误")) {
+                return Result.error("401", "原密码错误，请重新输入");
+            } else if (e.getMessage().contains("用户不存在")) {
+                return Result.error("404", "用户不存在");
+            }
+            return Result.error("500", e.getMessage());
         } catch (Exception e) {
             log.error("密码修改失败: {}", e.getMessage());
-            return Result.error(e.getMessage());
+            return Result.error("500", "服务器错误，请稍后重试");
         }
     }
 

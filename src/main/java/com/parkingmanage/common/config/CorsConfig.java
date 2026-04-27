@@ -16,7 +16,7 @@ public class CorsConfig {
 //      corsConfiguration.addAllowedOrigin("https://open.yidianting.xin"); // 1 设置访问源地址
         corsConfiguration.addAllowedOrigin("http://127.0.0.1:6954"); // 1 设置访问源地址
         corsConfiguration.addAllowedOrigin("http://localhost:6954"); // 1 设置访问源地址
-        corsConfiguration.addAllowedOrigin("http://10.100.111.2:6954"); // 1 设置访问源地址
+        corsConfiguration.addAllowedOrigin("http://10.120.11.1:6954"); // 1 设置访问源地址
         // 🆕 如果HTML文件部署在其他CDN或静态服务器上，需要添加对应域名
         // corsConfiguration.addAllowedOrigin("https://your-cdn-domain.com");
 //      corsConfiguration.addAllowedOrigin("https://47215w4p56.zicp.fun"); // 1 设置前台访问源地址

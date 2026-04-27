@@ -57,7 +57,7 @@ public class AcmsVipController {
     private ObjectMapper objectMapper;
 
     // 访客预约查询接口地址
-    @Value("${visitor.reservation.api.url:http://202.118.214.8:8675}")
+    @Value("${visitor.reservation.api.url:http://202.118.219.92:8675}")
     private String visitorReservationApiUrl;
 
     // 🔔 新增：WebSocket处理器
@@ -72,6 +72,9 @@ public class AcmsVipController {
 
     @org.springframework.beans.factory.annotation.Autowired(required = false)
     private com.parkingmanage.service.FocusAlertService focusAlertService;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.parkingmanage.service.NightStudentAlertService nightStudentAlertService;
 
     /**
      * 获取车主信息
@@ -699,9 +702,9 @@ public class AcmsVipController {
                                 // 添加前缀，如果URL以/开头，直接拼接；否则添加/
                                 String fullUrl;
                                 if (idCardPictureUrl.startsWith("/")) {
-                                    fullUrl = "https://10.100.111.5" + idCardPictureUrl;
+                                    fullUrl = "https://10.120.11.4" + idCardPictureUrl;
                                 } else {
-                                    fullUrl = "https://10.100.111.5/" + idCardPictureUrl;
+                                    fullUrl = "https://10.120.11.4/" + idCardPictureUrl;
                                 }
                                 eventRecord.setPhotoUrl(fullUrl);
                                 log.info("📷 [ACMS-数据推送] 身份证照片URL: {}", fullUrl);
@@ -947,9 +950,9 @@ public class AcmsVipController {
                             // 添加前缀，如果URL以/开头，直接拼接；否则添加/
                             String fullUrl;
                             if (pictureUrl.startsWith("/")) {
-                                fullUrl = "https://10.100.111.5" + pictureUrl;
+                                fullUrl = "https://10.120.11.4" + pictureUrl;
                             } else {
-                                fullUrl = "https://10.100.111.5/" + pictureUrl;
+                                fullUrl = "https://10.120.11.4/" + pictureUrl;
                             }
                             eventRecord.setPhotoUrl(fullUrl);
                             log.info("📷 [ACMS-数据推送] 人脸照片URL: {}", fullUrl);
@@ -1070,7 +1073,7 @@ public class AcmsVipController {
                                 // 确保照片URL有前缀
                                 String photoUrl = eventRecord.getPhotoUrl();
                                 if (photoUrl != null && !photoUrl.isEmpty() && !photoUrl.startsWith("http")) {
-                                    photoUrl = "https://10.100.111.5" + (photoUrl.startsWith("/") ? photoUrl : "/" + photoUrl);
+                                    photoUrl = "https://10.120.11.4" + (photoUrl.startsWith("/") ? photoUrl : "/" + photoUrl);
                                     log.info("📷 [关注追踪] 为人员照片添加前缀: {}", photoUrl);
                                 }
                                 
@@ -1087,8 +1090,43 @@ public class AcmsVipController {
                                     reservation
                                 );
                             } catch (Exception focusEx) {
-                                log.warn("⚠️ [ACMS-数据推送] 处理人员进出场关注提醒失败: 身份证={}, 错误={}", 
+                                log.warn("⚠️ [ACMS-数据推送] 处理人员进出场关注提醒失败: 身份证={}, 错误={}",
                                     eventRecord.getIdCard(), focusEx.getMessage());
+                            }
+                        }
+
+                        // 🌙 【新增】检查夜间学生出校提醒
+                        if (nightStudentAlertService != null) {
+                            try {
+                                // 检查是否应该触发夜间学生出校提醒
+                                if (nightStudentAlertService.shouldTriggerAlert(
+                                        eventRecord.getOrganization(),
+                                        eventRecord.getJobNo(),
+                                        eventRecord.getDirection(),
+                                        eventTime,
+                                        eventRecord.getChannelName())) {
+
+                                    // 创建夜间学生出校提醒记录
+                                    com.parkingmanage.entity.NightStudentAlertRecord nightAlert = new com.parkingmanage.entity.NightStudentAlertRecord();
+                                    nightAlert.setPersonName(eventRecord.getPersonName());
+                                    nightAlert.setIdCard(eventRecord.getIdCard());
+                                    nightAlert.setJobNo(eventRecord.getJobNo());
+                                    nightAlert.setGender(eventRecord.getGender());
+                                    // 从组织机构中提取学院名称
+                                    nightAlert.setCollege(extractCollegeFromOrganization(eventRecord.getOrganization()));
+                                    nightAlert.setChannelName(eventRecord.getChannelName());
+                                    nightAlert.setEventTime(happenTimeStr);  // 直接用原始字符串，不转换
+                                    nightAlert.setPhotoUrl(eventRecord.getPhotoUrl());
+
+                                    // 保存记录并推送WebSocket
+                                    nightStudentAlertService.createAlertAndPush(nightAlert);
+                                    log.info("🌙 [夜间学生出校提醒] 触发提醒 - 姓名: {}, 学院: {}, 通道: {}, 时间: {}",
+                                            eventRecord.getPersonName(), nightAlert.getCollege(),
+                                            eventRecord.getChannelName(), eventTime);
+                                }
+                            } catch (Exception nightEx) {
+                                log.warn("⚠️ [ACMS-数据推送] 处理夜间学生出校提醒失败: 姓名={}, 错误={}",
+                                        eventRecord.getPersonName(), nightEx.getMessage());
                             }
                         }
                     } else {
@@ -1772,13 +1810,13 @@ public class AcmsVipController {
                     
                     // 添加图片URL前缀（如果需要）
                     if (StringUtils.hasText(vehiclePictureUrl) && !vehiclePictureUrl.startsWith("http")) {
-                        vehiclePictureUrl = "https://10.100.111.5" + (vehiclePictureUrl.startsWith("/") ? "" : "/") + vehiclePictureUrl;
+                        vehiclePictureUrl = "https://10.120.11.4" + (vehiclePictureUrl.startsWith("/") ? "" : "/") + vehiclePictureUrl;
                     }
                     if (StringUtils.hasText(platePictureUrl) && !platePictureUrl.startsWith("http")) {
-                        platePictureUrl = "https://10.100.111.5" + (platePictureUrl.startsWith("/") ? "" : "/") + platePictureUrl;
+                        platePictureUrl = "https://10.120.11.4" + (platePictureUrl.startsWith("/") ? "" : "/") + platePictureUrl;
                     }
                     if (StringUtils.hasText(panoramaPictureUrl) && !panoramaPictureUrl.startsWith("http")) {
-                        panoramaPictureUrl = "https://10.100.111.5" + (panoramaPictureUrl.startsWith("/") ? "" : "/") + panoramaPictureUrl;
+                        panoramaPictureUrl = "https://10.120.11.4" + (panoramaPictureUrl.startsWith("/") ? "" : "/") + panoramaPictureUrl;
                     }
                     
                     // 构建违规记录对象（这里简化处理，实际应该保存到数据库）
@@ -1907,7 +1945,7 @@ public class AcmsVipController {
             String imageUrl = eventRecord.getPhotoUrl();
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 if (!imageUrl.startsWith("http")) {
-                    imageUrl = "https://10.100.111.5" + 
+                    imageUrl = "https://10.120.11.4" + 
                               (imageUrl.startsWith("/") ? imageUrl : "/" + imageUrl);
                 }
                 alert.put("imageUrl", imageUrl);
@@ -1925,5 +1963,30 @@ public class AcmsVipController {
         } catch (Exception e) {
             log.error("❌ 推送人员进场提醒失败", e);
         }
+    }
+
+    /**
+     * 从组织机构字符串中提取学院名称
+     * 格式示例：默认组织/计算机与控制工程学院/学生/硕士
+     * 返回：计算机与控制工程学院
+     *
+     * @param organization 组织机构字符串
+     * @return 学院名称，如果无法提取则返回原字符串
+     */
+    private String extractCollegeFromOrganization(String organization) {
+        if (organization == null || organization.isEmpty()) {
+            return organization;
+        }
+        String collegeName = organization;
+        // 去除"默认组织/"前缀
+        if (collegeName.startsWith("默认组织/")) {
+            collegeName = collegeName.substring("默认组织/".length());
+        }
+        // 取第一个"/"之前的部分作为学院名称
+        int slashIndex = collegeName.indexOf("/");
+        if (slashIndex > 0) {
+            collegeName = collegeName.substring(0, slashIndex);
+        }
+        return collegeName;
     }
 } 

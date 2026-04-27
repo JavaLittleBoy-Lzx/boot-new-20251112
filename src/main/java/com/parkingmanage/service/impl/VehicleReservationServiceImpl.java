@@ -99,7 +99,6 @@ public class VehicleReservationServiceImpl extends ServiceImpl<VehicleReservatio
 
     @Override
     public int updateEnterTime(String enterCarLicenseNumber, DateTime parse) {
-
         return baseMapper.updateEnterTime(enterCarLicenseNumber, parse);
     }
 
